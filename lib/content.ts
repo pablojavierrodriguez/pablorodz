@@ -416,8 +416,8 @@ export const principles = [
     number: '01',
     title: { es: 'Autonomía e Interoperabilidad', en: 'Data Autonomy & Open Interfaces' },
     body: {
-      es: 'Los sistemas deben diseñarse minimizando acoplamientos forzados con plataformas propietarias. Estándares abiertos, portabilidad e interfaces limpias garantizan que el valor y los datos pertenezcan al producto, no a la nube de turno.',
-      en: 'Systems should be designed minimizing forced vendor lock-in. Open standards, clean interfaces, and portable architectures ensure data and logic belong to the product, not to the hosting vendor.',
+      es: 'Los sistemas deben diseñarse minimizando acoplamientos forzados con plataformas propietarias. Desacoplar capacidades mediante estándares abiertos e interfaces limpias garantiza que el valor y los datos pertenezcan al producto, no al proveedor de turno.',
+      en: 'Systems should be designed minimizing forced vendor lock-in. Decoupling capabilities through open standards and clean interfaces ensures that data and logic belong to the product, not the hosting vendor.',
     },
   },
   {

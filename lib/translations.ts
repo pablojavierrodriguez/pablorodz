@@ -9,7 +9,7 @@ export const translations = {
     },
     nav: {
       systems: 'Sistemas',
-      chronicle: 'Trayectoria',
+      chronicle: 'Experiencia',
       principles: 'Principios',
       contact: 'Contacto',
       langLabel: 'EN',
@@ -42,8 +42,8 @@ export const translations = {
       launch_demo: 'Ver Demo en Vivo →',
     },
     chronicle: {
-      title: 'Crónica',
-      subtitle: 'Evolución de sistemas construidos, decisiones de arquitectura e impacto medible.',
+      title: 'Experiencia',
+      subtitle: 'Evolución de roles, sistemas construidos y casos de impacto medible.',
       linkedin_cta: 'Perfil completo en LinkedIn →',
       current: 'Actual',
       former: 'Anterior',
@@ -95,7 +95,7 @@ export const translations = {
     },
     nav: {
       systems: 'Systems',
-      chronicle: 'Chronicle',
+      chronicle: 'Experience',
       principles: 'Principles',
       contact: 'Contact',
       langLabel: 'ES',
@@ -128,8 +128,8 @@ export const translations = {
       launch_demo: 'Launch Live Demo →',
     },
     chronicle: {
-      title: 'Chronicle',
-      subtitle: "A record of systems built, architectural decisions made, and measurable impact.",
+      title: 'Experience',
+      subtitle: 'Evolution of roles, systems built, and measurable impact cases.',
       linkedin_cta: 'Full profile on LinkedIn →',
       current: 'Current',
       former: 'Former',

@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { useLanguage } from '@/lib/language-context'
 import { t } from '@/lib/translations'
 import { systems, type SystemProject } from '@/lib/content'
+import { useLiveStats, type ProjectLiveStats } from '@/lib/use-live-stats'
+import { SystemTopologyViewer } from '@/components/system-topology-viewer'
 
 const statusColors: Record<string, string> = {
   production: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20',
@@ -26,12 +28,14 @@ function SystemRow({
   onSelect,
   lens,
   lang,
+  liveStats,
 }: {
   system: SystemProject
   isSelected: boolean
   onSelect: () => void
   lens: Lens
   lang: 'es' | 'en'
+  liveStats?: ProjectLiveStats
 }) {
   return (
     <div
@@ -56,9 +60,36 @@ function SystemRow({
             >
               {visibilityLabel[system.visibility][lang]}
             </span>
-            {system.lifecycle[lang] && (
-              <span className="text-[10px] font-mono text-zinc-400 hidden sm:inline">
-                ({system.lifecycle[lang]})
+
+            {/* DYNAMIC LIVE BADGE (If fetched) OR FALLBACK LIFECYCLE */}
+            {liveStats?.isLive ? (
+              <span
+                className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/20"
+                title={lang === 'es' ? 'Versión sincronizada en vivo' : 'Live synchronized release'}
+              >
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                </span>
+                <span>v{liveStats.version}</span>
+                <span className="text-[9px] text-emerald-400/80 font-semibold">[live]</span>
+              </span>
+            ) : (
+              system.lifecycle[lang] && (
+                <span className="text-[10px] font-mono text-zinc-400 hidden sm:inline">
+                  ({system.lifecycle[lang]})
+                </span>
+              )
+            )}
+
+            {/* GITHUB STARS BADGE */}
+            {liveStats?.stars !== null && liveStats?.stars !== undefined && (
+              <span
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/20"
+                title={lang === 'es' ? `${liveStats.stars} estrellas en GitHub` : `${liveStats.stars} stars on GitHub`}
+              >
+                <span className="text-amber-400 text-[11px] leading-none">★</span>
+                <span>{liveStats.stars} {liveStats.stars === 1 ? 'star' : 'stars'}</span>
               </span>
             )}
           </div>
@@ -105,11 +136,13 @@ function SpecSheet({
   lens,
   onLensChange,
   lang,
+  liveStats,
 }: {
   system: SystemProject
   lens: Lens
   onLensChange: (l: Lens) => void
   lang: 'es' | 'en'
+  liveStats?: ProjectLiveStats
 }) {
   return (
     <div className="p-6 rounded-2xl bg-black/40 border border-white/10 shadow-2xl relative overflow-hidden transition-all duration-300">
@@ -117,13 +150,33 @@ function SpecSheet({
       {/* SpecSheet Header: Title + Contextual Lens Switcher */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/[0.08]">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex flex-wrap items-center gap-2 mb-1">
             <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-widest block">
               {t(lang, 'systems.spec_sheet')} &bull; {system.index}
             </span>
             <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${statusColors[system.status]}`}>
               {system.lifecycle[lang]}
             </span>
+
+            {/* SpecSheet Live Badge */}
+            {liveStats?.isLive && (
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                </span>
+                <span>v{liveStats.version}</span>
+                <span className="text-[9px] text-emerald-400/80 font-semibold">[live]</span>
+              </span>
+            )}
+
+            {/* SpecSheet Stars Badge */}
+            {liveStats?.stars !== null && liveStats?.stars !== undefined && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                <span className="text-amber-400 text-[11px] leading-none">★</span>
+                <span>{liveStats.stars} {liveStats.stars === 1 ? 'star' : 'stars'}</span>
+              </span>
+            )}
           </div>
           <h3 className="font-bold text-lg text-white font-mono flex items-center gap-2">
             {system.name}
@@ -158,7 +211,7 @@ function SpecSheet({
 
       {/* Narrative view */}
       <div className="py-4">
-        <p className="text-sm text-zinc-200 leading-relaxed font-light">
+        <p className="text-sm text-zinc-200 leading-relaxed font-normal">
           {lens === 'product' ? system.productView[lang] : system.archView[lang]}
         </p>
       </div>
@@ -166,12 +219,11 @@ function SpecSheet({
       {/* ARCHITECTURE VIEW: TOPOLOGY & DEEP STACK */}
       {lens === 'arch' && (
         <div className="space-y-4 pt-2 transition-all duration-300">
-          <div className="bg-[#08090c] p-4 rounded-xl border border-indigo-500/20 font-mono text-xs text-indigo-200 whitespace-pre-wrap overflow-x-auto leading-relaxed shadow-inner">
-            <span className="text-zinc-500 block text-[10px] uppercase tracking-wider mb-2 font-bold">
-              📐 {t(lang, 'systems.topology')}
-            </span>
-            {system.topology}
-          </div>
+          <SystemTopologyViewer
+            systemId={system.id}
+            rawTopology={system.topology}
+            lang={lang}
+          />
 
           <div>
             <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block mb-2">
@@ -212,7 +264,12 @@ function SpecSheet({
             className="px-4 py-2 rounded-xl border border-white/10 hover:border-white/30 text-zinc-300 hover:text-white text-xs font-medium transition-all duration-200 cursor-pointer flex items-center gap-2"
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-            GitHub
+            <span>GitHub</span>
+            {liveStats?.stars !== null && liveStats?.stars !== undefined && (
+              <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-white/[0.08] text-amber-300 font-semibold flex items-center gap-1">
+                ★ {liveStats.stars}
+              </span>
+            )}
           </a>
         )}
 
@@ -226,6 +283,11 @@ function SpecSheet({
             <span>npm</span>
             <span className="text-zinc-500">&bull;</span>
             <span>{system.name === 'gripm' ? '@gripm/board' : '@gripm/playbook'}</span>
+            {liveStats?.version && (
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-200 border border-red-500/30">
+                v{liveStats.version}
+              </span>
+            )}
           </a>
         )}
 
@@ -247,8 +309,10 @@ export function SystemsSection() {
   const { lang } = useLanguage()
   const [selected, setSelected] = useState<string>(systems[0].id)
   const [lens, setLens] = useState<Lens>('product')
+  const { getStats, isLive: hasAnyLiveSync } = useLiveStats()
 
   const selectedSystem = systems.find((s) => s.id === selected)!
+  const selectedLiveStats = getStats(selectedSystem.id)
 
   return (
     <section id="systems" className="py-24 px-5">
@@ -257,7 +321,15 @@ export function SystemsSection() {
         {/* Section header */}
         <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <span className="font-mono text-[11px] text-zinc-500 uppercase tracking-widest block mb-1">01</span>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="font-mono text-[11px] text-zinc-500 uppercase tracking-widest block">01</span>
+              {hasAnyLiveSync && (
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  LIVE SYNC ACTIVE
+                </span>
+              )}
+            </div>
             <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{t(lang, 'systems.title')}</h2>
             <p className="text-sm text-zinc-400 mt-1 max-w-lg">{t(lang, 'systems.subtitle')}</p>
           </div>
@@ -297,6 +369,7 @@ export function SystemsSection() {
               onSelect={() => setSelected(s.id)}
               lens={lens}
               lang={lang}
+              liveStats={getStats(s.id)}
             />
           ))}
         </div>
@@ -307,6 +380,7 @@ export function SystemsSection() {
           lens={lens}
           onLensChange={setLens}
           lang={lang}
+          liveStats={selectedLiveStats}
         />
       </div>
     </section>

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#141820" />
+      <stop offset="100%" stop-color="#0a0c10" />
+    </linearGradient>
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background Squircle -->
+  <rect width="64" height="64" rx="16" fill="url(#bg)" />
+  <rect width="62" height="62" x="1" y="1" rx="15" stroke="#10b981" stroke-opacity="0.3" stroke-width="1.5" />
+
+  <!-- Architectural Vertical Pillar (Spine) -->
+  <rect x="16" y="16" width="7" height="32" rx="3.5" fill="#f4f4f5" />
+
+  <!-- Loop of the 'P' (Geometric / Node Convergence) -->
+  <path
+    d="M 23 20 H 34 C 40.5 20 44.5 23.5 44.5 27 C 44.5 30.5 40.5 34 34 34 H 23"
+    stroke="url(#emeraldGrad)"
+    stroke-width="5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- Convergence Node -->
+  <circle cx="44.5" cy="27" r="5" fill="#10b981" fill-opacity="0.25" />
+  <circle cx="44.5" cy="27" r="2.5" fill="#34d399" />
+  <circle cx="44.5" cy="27" r="1.2" fill="#ffffff" />
+
+  <!-- Terminal Cursor Accent -->
+  <rect x="27" y="44" width="10" height="4" rx="2" fill="#10b981" fill-opacity="0.9" />
+</svg>

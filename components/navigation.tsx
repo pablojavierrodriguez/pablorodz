@@ -11,7 +11,7 @@ export function Navigation() {
 
   const links = [
     { href: '#systems', label: t(lang, 'nav.systems') },
-    { href: '#chronicle', label: t(lang, 'nav.chronicle') },
+    { href: '#experience', label: t(lang, 'nav.chronicle') },
     { href: '#principles', label: t(lang, 'nav.principles') },
     { href: '#contact', label: t(lang, 'nav.contact') },
   ]
