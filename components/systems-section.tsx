@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useLanguage } from '@/lib/language-context'
+import { useLens, type Lens } from '@/lib/lens-context'
 import { t } from '@/lib/translations'
 import { systems, type SystemProject } from '@/lib/content'
 import { useLiveStats, type ProjectLiveStats } from '@/lib/use-live-stats'
@@ -20,7 +21,6 @@ const visibilityLabel: Record<string, { es: string; en: string }> = {
   'private-upcoming-oss': { es: 'Privado → Próximo OSS', en: 'Private → Upcoming OSS' },
 }
 
-type Lens = 'product' | 'arch'
 
 function SystemRow({
   system,
@@ -361,6 +361,7 @@ function SpecSheet({
             systemId={system.id}
             rawTopology={system.topology}
             lang={lang}
+            lens={lens}
           />
         )}
       </div>
@@ -447,7 +448,7 @@ function SpecSheet({
 export function SystemsSection() {
   const { lang } = useLanguage()
   const [selected, setSelected] = useState<string>(systems[0].id)
-  const [lens, setLens] = useState<Lens>('product')
+  const { lens, setLens } = useLens()
   const { getStats, isLive: hasAnyLiveSync } = useLiveStats()
 
   const selectedSystem = systems.find((s) => s.id === selected)!

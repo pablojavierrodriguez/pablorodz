@@ -8,7 +8,7 @@ export function Footer() {
   const { lang } = useLanguage()
 
   return (
-    <footer className="border-t border-white/[0.04] py-10 px-5">
+    <footer className="border-t border-white/[0.04] pt-10 pb-16 px-5">
       <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-zinc-600">
         <div>
           <p className="text-zinc-400 font-medium">{profile.name}</p>

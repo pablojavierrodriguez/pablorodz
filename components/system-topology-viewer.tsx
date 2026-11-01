@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { useLens, type Lens } from '@/lib/lens-context'
 
 export interface ArchitectureNode {
   id: string
@@ -15,6 +16,18 @@ export interface ArchitectureNode {
     protocol: string
     bidirectional?: boolean
   }
+  productBadge?: { es: string; en: string }
+  archBadge?: { es: string; en: string }
+  resilienceFallback?: { es: string; en: string }
+}
+
+export interface TraceStepDefinition {
+  step: number
+  nodeId: string | string[]
+  timeOffset: string
+  category: ArchitectureNode['category']
+  action: { es: string; en: string }
+  detail: { es: string; en: string }
 }
 
 export interface SystemArchitecture {
@@ -34,31 +47,51 @@ export interface SystemArchitecture {
       node: ArchitectureNode
     }[]
   }
+  traceSteps?: TraceStepDefinition[]
 }
 
 const CATEGORY_STYLES: Record<
   ArchitectureNode['category'],
-  { badge: string; dot: string; glow: string }
+  {
+    badge: string
+    dot: string
+    glow: string
+    activeRing: string
+    activeBg: string
+    pulseColor: string
+  }
 > = {
   client: {
     badge: 'bg-sky-500/10 text-sky-300 border-sky-500/20',
     dot: 'bg-sky-400',
     glow: 'group-hover:border-sky-500/30',
+    activeRing: 'ring-2 ring-sky-400 border-sky-400 shadow-[0_0_25px_rgba(56,189,248,0.45)]',
+    activeBg: 'bg-[#0b1726]',
+    pulseColor: 'bg-sky-400',
   },
   gate: {
     badge: 'bg-amber-500/10 text-amber-300 border-amber-500/20',
     dot: 'bg-amber-400',
     glow: 'group-hover:border-amber-500/30',
+    activeRing: 'ring-2 ring-amber-400 border-amber-400 shadow-[0_0_25px_rgba(251,191,36,0.45)]',
+    activeBg: 'bg-[#1e1507]',
+    pulseColor: 'bg-amber-400',
   },
   engine: {
     badge: 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20',
     dot: 'bg-indigo-400',
     glow: 'group-hover:border-indigo-500/30',
+    activeRing: 'ring-2 ring-indigo-400 border-indigo-400 shadow-[0_0_25px_rgba(129,140,248,0.45)]',
+    activeBg: 'bg-[#111226]',
+    pulseColor: 'bg-indigo-400',
   },
   storage: {
     badge: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
     dot: 'bg-emerald-400',
     glow: 'group-hover:border-emerald-500/30',
+    activeRing: 'ring-2 ring-emerald-400 border-emerald-400 shadow-[0_0_25px_rgba(52,211,153,0.45)]',
+    activeBg: 'bg-[#071912]',
+    pulseColor: 'bg-emerald-400',
   },
 }
 
@@ -98,6 +131,12 @@ const TOPOLOGIES: Record<string, SystemArchitecture> = {
         },
         category: 'client',
         tag: 'IDE Client Surface',
+        productBadge: { es: 'Cero Costo de Nube', en: 'Zero Cloud Cost' },
+        archBadge: { es: 'stdio JSON-RPC IPC', en: 'stdio JSON-RPC IPC' },
+        resilienceFallback: {
+          es: 'Host IDE desconectado ➔ Gripm CLI Daemon conserva estado en memoria. Reintentos automáticos con sincronización de diff al reconectar.',
+          en: 'IDE Host disconnected ➔ Gripm CLI Daemon preserves in-memory queue. Reconnecting sessions receive zero-loss state diff.',
+        },
         contractToNext: {
           label: 'Model Context Protocol (MCP)',
           protocol: 'JSON-RPC over stdio',
@@ -115,6 +154,12 @@ const TOPOLOGIES: Record<string, SystemArchitecture> = {
         },
         category: 'engine',
         tag: 'IPC Router & Daemon',
+        productBadge: { es: 'Soberanía en Localhost', en: 'Local Sovereignty' },
+        archBadge: { es: 'Atomic In-Memory Router', en: 'Atomic In-Memory Router' },
+        resilienceFallback: {
+          es: 'MCP stdio connection severed ➔ Graceful fallback to local Markdown backlog on disk (.md). Zero data loss.',
+          en: 'MCP stdio connection severed ➔ Graceful fallback to local Markdown backlog on disk (.md). Zero data loss.',
+        },
       },
     ],
     bifurcation: {
@@ -134,6 +179,12 @@ const TOPOLOGIES: Record<string, SystemArchitecture> = {
             },
             category: 'storage',
             tag: 'Zero-Cloud Backlog',
+            productBadge: { es: 'Control Soberano en Git', en: '100% Git Control' },
+            archBadge: { es: 'fs.watch + Markdown AST', en: 'fs.watch + Markdown AST' },
+            resilienceFallback: {
+              es: 'Bloqueo de I/O en sistema de archivos ➔ Buffer volátil en RAM encola mutaciones con flush determinístico al liberar el lock.',
+              en: 'Filesystem I/O lock detected ➔ In-memory RAM buffer enqueues mutations, flushing deterministically once lock is released.',
+            },
           },
         },
         {
@@ -150,10 +201,74 @@ const TOPOLOGIES: Record<string, SystemArchitecture> = {
             },
             category: 'client',
             tag: 'Local Vite UI',
+            productBadge: { es: 'Cero Telemetría Externa', en: 'Zero Tracking Telemetry' },
+            archBadge: { es: 'WebSocket Local :4100', en: 'Local WebSocket :4100' },
+            resilienceFallback: {
+              es: 'Desconexión de UI Localhost ➔ El Daemon CLI y los agentes de IA continúan operando al 100% de capacidad vía terminal.',
+              en: 'Localhost UI disconnected ➔ CLI Daemon and AI agents continue at 100% capacity independently of web surface.',
+            },
           },
         },
       ],
     },
+    traceSteps: [
+      {
+        step: 0,
+        nodeId: 'agent-host',
+        timeOffset: '+0ms',
+        category: 'client',
+        action: {
+          es: 'Acción de Cliente despachada vía Evento de UI / Agente',
+          en: 'Client Action dispatched via UI Event / Agent',
+        },
+        detail: {
+          es: 'IDE Host despacha tool call `gripm_list_tasks` hacia canal IPC local',
+          en: 'IDE Host dispatches tool call `gripm_list_tasks` to local IPC channel',
+        },
+      },
+      {
+        step: 1,
+        nodeId: 'core-daemon',
+        timeOffset: '+3ms',
+        category: 'engine',
+        action: {
+          es: 'Handshake verificado vía stdio JSON-RPC',
+          en: 'Handshake verified via stdio JSON-RPC',
+        },
+        detail: {
+          es: 'Core Daemon reconcilia estado en memoria y despacha mutación atómica',
+          en: 'Core Daemon reconciles in-memory state and routes atomic mutation',
+        },
+      },
+      {
+        step: 2,
+        nodeId: 'git-backlog',
+        timeOffset: '+9ms',
+        category: 'storage',
+        action: {
+          es: 'Local FS Watcher & Sync Engine sincronizado',
+          en: 'Local FS Watcher & Sync Engine synchronized',
+        },
+        detail: {
+          es: 'Escritura atómica en `.md` local + evento fs.watch propagado sin nube',
+          en: 'Atomic write to local `.md` + fs.watch event propagated with zero cloud exposure',
+        },
+      },
+      {
+        step: 3,
+        nodeId: 'web-cockpit',
+        timeOffset: '+14ms',
+        category: 'client',
+        action: {
+          es: 'Estado comprometido a Disco Local & WebSocket Cockpit',
+          en: 'State committed to Local Disk / Ledger & WebSocket Cockpit',
+        },
+        detail: {
+          es: 'Tablero Kanban local sincronizado en localhost:4100 en sub-milisegundo',
+          en: 'Local Kanban board synchronized on localhost:4100 in sub-millisecond range',
+        },
+      },
+    ],
   },
   'gripm-playbook': {
     systemId: 'gripm-playbook',
@@ -190,6 +305,12 @@ const TOPOLOGIES: Record<string, SystemArchitecture> = {
         },
         category: 'client',
         tag: 'Spec & AC Authoring',
+        productBadge: { es: 'Alineación de Negocio 100%', en: '100% Business Alignment' },
+        archBadge: { es: 'Executable Gherkin Specs', en: 'Executable Gherkin Specs' },
+        resilienceFallback: {
+          es: 'Especificación ambigua o incompleta ➔ El pipeline se detiene antes de consumir recursos de desarrollo. Notificación automática de criterios faltantes.',
+          en: 'Incomplete or ambiguous spec ➔ Delivery pipeline halts before engineering hours are spent. Missing criteria flagged automatically.',
+        },
         contractToNext: {
           label: 'Handoff Formal de Especificación',
           protocol: 'Markdown Frontmatter + AC Checklist',
@@ -207,6 +328,12 @@ const TOPOLOGIES: Record<string, SystemArchitecture> = {
         },
         category: 'engine',
         tag: 'Code & Types Implementation',
+        productBadge: { es: 'Entrega Predecible y Ágil', en: 'Predictable Swift Delivery' },
+        archBadge: { es: 'Strict TypeScript Contracts', en: 'Strict TypeScript Contracts' },
+        resilienceFallback: {
+          es: 'Fallo de compilación o tipo "any" detectado ➔ Compuerta pre-merge bloqueada de inmediato. Cero código con advertencias llega a QA.',
+          en: 'Compilation error or "any" type detected ➔ Pre-merge gate blocks commit immediately. Zero warning code reaches QA.',
+        },
         contractToNext: {
           label: 'Compuerta de Entrega a Calidad',
           protocol: 'Pre-merge Zero-Warning Gate',
@@ -224,6 +351,12 @@ const TOPOLOGIES: Record<string, SystemArchitecture> = {
         },
         category: 'gate',
         tag: 'Static Analysis & Regressions',
+        productBadge: { es: 'Cero Regresiones a Producción', en: 'Zero Production Regressions' },
+        archBadge: { es: 'Static Analysis & LOC Budget', en: 'Static Analysis & LOC Budget' },
+        resilienceFallback: {
+          es: 'Compuerta QA detecta regresión o límite LOC excedido ➔ Bucle de feedback activado: rechazo formal con reporte de diagnóstico exacto.',
+          en: 'QA gate detects regression or LOC budget breach ➔ Feedback loop triggered: formal rejection with precise diagnostic report.',
+        },
         contractToNext: {
           label: 'Bucle de Revisión / Aprobación',
           protocol: 'Review Feedback Loop (Rejection / Sign-off)',
@@ -241,6 +374,70 @@ const TOPOLOGIES: Record<string, SystemArchitecture> = {
         },
         category: 'gate',
         tag: 'Heuristics & Design Tokens',
+        productBadge: { es: 'Experiencia Sin Fricción', en: 'Frictionless Experience' },
+        archBadge: { es: 'Design Token Invariants', en: 'Design Token Invariants' },
+        resilienceFallback: {
+          es: 'Auditoría UX detecta fallo de contraste o inconsistencia de tokens ➔ Handoff bloqueado hasta subsanar regla heurística violada.',
+          en: 'UX audit flags contrast or token inconsistency ➔ Handoff blocked until heuristic invariant is satisfied.',
+        },
+      },
+    ],
+    traceSteps: [
+      {
+        step: 0,
+        nodeId: 'pm-orchestrator',
+        timeOffset: '+0ms',
+        category: 'client',
+        action: {
+          es: 'Desglose de Requerimientos & Criterios Gherkin',
+          en: 'Requirement Breakdown & Gherkin Criteria',
+        },
+        detail: {
+          es: 'Criterios de aceptación estructurados en Markdown frontmatter ejecutable',
+          en: 'Executable acceptance criteria authored in structured Markdown frontmatter',
+        },
+      },
+      {
+        step: 1,
+        nodeId: 'principal-engineer',
+        timeOffset: '+5ms',
+        category: 'engine',
+        action: {
+          es: 'Implementación Modular & Tipado Estricto',
+          en: 'Modular Implementation & Strict Typing',
+        },
+        detail: {
+          es: 'Construcción técnica modular sin tipos any y suite de tests unitarios',
+          en: 'Modular engineering without any types and unit test suite verification',
+        },
+      },
+      {
+        step: 2,
+        nodeId: 'qa-auditor',
+        timeOffset: '+10ms',
+        category: 'gate',
+        action: {
+          es: 'Auditoría Estática de Calidad & Cobertura',
+          en: 'Static Quality Audit & Coverage Check',
+        },
+        detail: {
+          es: 'Compuerta pre-merge: límites LOC respetados, cero warnings en compilador',
+          en: 'Pre-merge gate: LOC budget limits verified, zero compiler warnings',
+        },
+      },
+      {
+        step: 3,
+        nodeId: 'ux-designer',
+        timeOffset: '+16ms',
+        category: 'gate',
+        action: {
+          es: 'Validación Heurística & Tokens de Diseño',
+          en: 'Heuristic Validation & Design Token Sign-off',
+        },
+        detail: {
+          es: 'Aprobación de contraste WCAG AAA, jerarquía visual y accesibilidad',
+          en: 'WCAG AAA contrast, visual hierarchy, and accessibility sign-off complete',
+        },
       },
     ],
   },
@@ -279,6 +476,12 @@ const TOPOLOGIES: Record<string, SystemArchitecture> = {
         },
         category: 'client',
         tag: 'Edge Routing & Ingress',
+        productBadge: { es: 'Sub-45ms de Respuesta', en: 'Sub-45ms Response' },
+        archBadge: { es: 'Next.js Edge Middleware', en: 'Next.js Edge Middleware' },
+        resilienceFallback: {
+          es: 'Edge isolation engaged ➔ Read-only cached tenant view served. Write operations queued in client buffer.',
+          en: 'Edge isolation engaged ➔ Read-only cached tenant view served. Write operations queued in client buffer.',
+        },
         contractToNext: {
           label: 'Resolución de Tenant & Claims',
           protocol: 'JWT Claims + Tenant Scope Check',
@@ -296,6 +499,12 @@ const TOPOLOGIES: Record<string, SystemArchitecture> = {
         },
         category: 'gate',
         tag: 'Cryptographic Guard',
+        productBadge: { es: 'Aislamiento Estricto de Clientes', en: 'Strict Client Isolation' },
+        archBadge: { es: 'JWT Scope Confinement', en: 'JWT Scope Confinement' },
+        resilienceFallback: {
+          es: 'Fallo en barrera de seguridad ➔ Protocolo Fail-Closed: denegación inmediata 401/403. Cero riesgo de fuga entre inquilinos.',
+          en: 'Security boundary fault ➔ Fail-Closed protocol: immediate 401/403 denial. Zero risk of cross-tenant data leakage.',
+        },
         contractToNext: {
           label: 'Contexto de Ejecución Aislado',
           protocol: 'Strict Tenant Execution Context',
@@ -313,6 +522,12 @@ const TOPOLOGIES: Record<string, SystemArchitecture> = {
         },
         category: 'engine',
         tag: 'Typed Domain Engine',
+        productBadge: { es: 'Alto Rendimiento Operativo', en: 'High-Throughput Services' },
+        archBadge: { es: 'Typed Route Handlers', en: 'Typed Route Handlers' },
+        resilienceFallback: {
+          es: 'Sobrecarga de servicios de dominio ➔ Circuit breaker accionado. Tráfico redirigido a réplicas en standby con idempotencia.',
+          en: 'Domain service overload ➔ Circuit breaker tripped. Traffic routed to standby replicas with idempotent execution keys.',
+        },
         contractToNext: {
           label: 'Ruta de Búsqueda & Stream de Auditoría',
           protocol: 'Postgres Search Path + Immutable Audit Stream',
@@ -330,6 +545,70 @@ const TOPOLOGIES: Record<string, SystemArchitecture> = {
         },
         category: 'storage',
         tag: 'Multi-Schema Database',
+        productBadge: { es: 'Auditoría Inmutable de Cumplimiento', en: 'Audit-Ready Compliance' },
+        archBadge: { es: 'Postgres Schema Isolation', en: 'Postgres Schema Isolation' },
+        resilienceFallback: {
+          es: 'Pool de PostgreSQL saturado ➔ Degeneración graceful a réplica de lectura. Registro de auditoría persiste en buffer WAL de emergencia.',
+          en: 'PostgreSQL connection pool exhausted ➔ Graceful degradation to read replica. Audit stream buffered to emergency WAL.',
+        },
+      },
+    ],
+    traceSteps: [
+      {
+        step: 0,
+        nodeId: 'edge-ingress',
+        timeOffset: '+0ms',
+        category: 'client',
+        action: {
+          es: 'Ingress Request en Edge con Hostname de Organización',
+          en: 'Edge Ingress Request with Organization Hostname',
+        },
+        detail: {
+          es: 'Next.js App Router resuelve tenant.c3admin.com y normaliza headers',
+          en: 'Next.js App Router resolves tenant.c3admin.com and normalizes headers',
+        },
+      },
+      {
+        step: 1,
+        nodeId: 'rbac-middleware',
+        timeOffset: '+4ms',
+        category: 'gate',
+        action: {
+          es: 'Validación Criptográfica & Confinamiento de Scope',
+          en: 'Cryptographic Validation & Scope Confinement',
+        },
+        detail: {
+          es: 'Claims JWT verificados · Contexto confinado estrictamente a org_id',
+          en: 'JWT claims verified · Context strictly confined to org_id boundary',
+        },
+      },
+      {
+        step: 2,
+        nodeId: 'domain-services',
+        timeOffset: '+11ms',
+        category: 'engine',
+        action: {
+          es: 'Ejecución de Dominio Fuertemente Tipada',
+          en: 'Strongly Typed Domain Execution',
+        },
+        detail: {
+          es: 'Mutación ejecutada en sandbox de inquilino sin ORM bloat',
+          en: 'Mutation executed in tenant sandbox without ORM bloat',
+        },
+      },
+      {
+        step: 3,
+        nodeId: 'db-storage',
+        timeOffset: '+24ms',
+        category: 'storage',
+        action: {
+          es: 'Commit en Esquema PostgreSQL Aislado + Audit Stream',
+          en: 'PostgreSQL Schema Isolation Commit + Audit Stream',
+        },
+        detail: {
+          es: 'Postgres search_path fijado al esquema del inquilino + registro append-only',
+          en: 'Postgres search_path pinned to tenant schema + append-only audit trail',
+        },
       },
     ],
   },
@@ -368,6 +647,12 @@ const TOPOLOGIES: Record<string, SystemArchitecture> = {
         },
         category: 'client',
         tag: 'Local React Surface',
+        productBadge: { es: 'Privacidad Absoluta de Datos', en: 'Absolute User Privacy' },
+        archBadge: { es: 'In-Memory React 19 State', en: 'In-Memory React 19 State' },
+        resilienceFallback: {
+          es: 'Fallo de renderizado de UI ➔ El estado contable en memoria permanece inalterado. Recuperación limpia de sesión sin pérdida.',
+          en: 'UI render crash ➔ In-memory ledger state remains intact. Session recovery executes cleanly without data corruption.',
+        },
         contractToNext: {
           label: 'API Criptográfica Web Nativa',
           protocol: 'SubtleCrypto Web API (AES-256-GCM / PBKDF2)',
@@ -385,6 +670,12 @@ const TOPOLOGIES: Record<string, SystemArchitecture> = {
         },
         category: 'gate',
         tag: 'Volatile In-Memory Sandbox',
+        productBadge: { es: 'Cero Datos en Servidores', en: 'Zero Plaintext Server' },
+        archBadge: { es: 'AES-256-GCM / PBKDF2', en: 'AES-256-GCM / PBKDF2' },
+        resilienceFallback: {
+          es: 'Fallo en WebCrypto SubtleCrypto ➔ Bloqueo inmediato de memoria. La transacción se cancela antes de exponer datos sin cifrar.',
+          en: 'WebCrypto SubtleCrypto fault ➔ Immediate memory seal. Operation aborted before any plaintext can be exposed.',
+        },
         contractToNext: {
           label: 'Payloads Validados Criptográficamente',
           protocol: 'Decrypted In-Memory Transaction Streams',
@@ -402,6 +693,12 @@ const TOPOLOGIES: Record<string, SystemArchitecture> = {
         },
         category: 'engine',
         tag: 'Balanced Invariant Validator',
+        productBadge: { es: 'Cuadre Contable Garantizado', en: 'Guaranteed Ledger Balance' },
+        archBadge: { es: 'Deterministic Σ(D)=Σ(C)', en: 'Deterministic Σ(D)=Σ(C)' },
+        resilienceFallback: {
+          es: 'Invariante de partida doble violada (Débitos ≠ Créditos) ➔ Rollback atómico instantáneo. Asientos desbalanceados son estrictamente rechazados.',
+          en: 'Double-entry invariant violated (Debits ≠ Credits) ➔ Instant atomic rollback. Unbalanced entries are strictly rejected.',
+        },
         contractToNext: {
           label: 'Transacciones Locales & Blobs Cifrados',
           protocol: 'IndexedDB Transactions + Encrypted Blob Sync',
@@ -419,6 +716,70 @@ const TOPOLOGIES: Record<string, SystemArchitecture> = {
         },
         category: 'storage',
         tag: 'Client-Side Sovereign DB',
+        productBadge: { es: '100% Offline Soberano', en: '100% Sovereign Offline' },
+        archBadge: { es: 'Encrypted IndexedDB Blobs', en: 'Encrypted IndexedDB Blobs' },
+        resilienceFallback: {
+          es: 'Network partition ➔ AES-GCM local-first IndexedDB engine retains full double-entry ledger integrity.',
+          en: 'Network partition ➔ AES-GCM local-first IndexedDB engine retains full double-entry ledger integrity.',
+        },
+      },
+    ],
+    traceSteps: [
+      {
+        step: 0,
+        nodeId: 'browser-ui',
+        timeOffset: '+0ms',
+        category: 'client',
+        action: {
+          es: 'Captura Reactiva de Asiento Contable',
+          en: 'Reactive Ledger Entry Capture',
+        },
+        detail: {
+          es: 'Captura reactiva en memoria del cliente con validación instantánea de formulario',
+          en: 'Reactive client in-memory capture with instant form type validation',
+        },
+      },
+      {
+        step: 1,
+        nodeId: 'crypto-layer',
+        timeOffset: '+2ms',
+        category: 'gate',
+        action: {
+          es: 'Sandpit Criptográfico & Cifrado AES-256-GCM',
+          en: 'Cryptographic Sandpit & AES-256-GCM Cipher',
+        },
+        detail: {
+          es: 'Derivación de clave PBKDF2 y cifrado en memoria volátil del navegador',
+          en: 'PBKDF2 key derivation and symmetric encryption in volatile browser memory',
+        },
+      },
+      {
+        step: 2,
+        nodeId: 'ledger-engine',
+        timeOffset: '+6ms',
+        category: 'engine',
+        action: {
+          es: 'Verificación Estricta de Partida Doble',
+          en: 'Strict Double-Entry Invariant Verification',
+        },
+        detail: {
+          es: 'Verificación determinística de suma cero: Σ(Débitos) === Σ(Créditos)',
+          en: 'Deterministic zero-sum balance: Σ(Debits) === Σ(Credits) enforced',
+        },
+      },
+      {
+        step: 3,
+        nodeId: 'idb-storage',
+        timeOffset: '+11ms',
+        category: 'storage',
+        action: {
+          es: 'Persistencia Offline Soberana en IndexedDB',
+          en: 'Sovereign Offline Persistence in IndexedDB',
+        },
+        detail: {
+          es: 'Blob cifrado guardado en disco local con cero transmisión de texto plano',
+          en: 'Encrypted blob committed to local disk with zero plaintext transmission',
+        },
       },
     ],
   },
@@ -427,17 +788,42 @@ const TOPOLOGIES: Record<string, SystemArchitecture> = {
 function NodeCard({
   node,
   lang,
+  lens,
+  isTraversed,
+  isFailed,
+  chaosMode,
+  onNodeClick,
 }: {
   node: ArchitectureNode
   lang: 'es' | 'en'
+  lens: Lens
+  isTraversed?: boolean
+  isFailed?: boolean
+  chaosMode?: boolean
+  onNodeClick?: () => void
 }) {
   const style = CATEGORY_STYLES[node.category]
 
   return (
     <div
-      className={`group relative rounded-xl border border-white/[0.08] bg-[#0d1017]/90 p-4 transition-all duration-200 hover:border-white/20 hover:bg-[#11151f] hover:shadow-lg hover:shadow-black/40 ${style.glow}`}
+      onClick={chaosMode ? onNodeClick : undefined}
+      className={`group relative rounded-xl border p-4 transition-all duration-300 ${
+        isFailed
+          ? 'border-2 border-dashed border-red-500/80 bg-red-950/25 shadow-[0_0_25px_rgba(239,68,68,0.3)]'
+          : isTraversed
+          ? `${style.activeRing} ${style.activeBg}`
+          : `border-white/[0.08] bg-[#0d1017]/90 hover:border-white/20 hover:bg-[#11151f] hover:shadow-lg hover:shadow-black/40 ${style.glow}`
+      } ${chaosMode ? 'cursor-pointer select-none ring-1 ring-white/10 hover:ring-amber-400/50' : ''}`}
     >
-      {/* Top Meta: Stage Number + Badge */}
+      {/* Chaos Mode Target Prompt */}
+      {chaosMode && !isFailed && (
+        <div className="absolute -top-2.5 right-4 z-10 px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[9px] font-mono font-semibold tracking-wider flex items-center gap-1 shadow-md backdrop-blur">
+          <span>⚡</span>
+          <span>{lang === 'es' ? 'Click: inducir fallo' : 'Click: inject fault'}</span>
+        </div>
+      )}
+
+      {/* Top Meta: Stage Number + Badge + Status */}
       <div className="flex items-center justify-between gap-2 mb-2">
         <div className="flex items-center gap-1.5">
           <span className="font-mono text-[10px] font-bold text-zinc-500 tracking-wider">
@@ -448,21 +834,72 @@ function NodeCard({
             {node.stageLabel[lang]}
           </span>
         </div>
-        <span
-          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-mono font-medium border ${style.badge}`}
-        >
-          <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
-          {node.tag}
-        </span>
+
+        <div className="flex items-center gap-1.5">
+          {/* Failed State Indicator */}
+          {isFailed ? (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-red-500/20 text-red-300 border border-red-500/40 animate-pulse">
+              <span>⚠</span>
+              <span>{lang === 'es' ? 'OFFLINE / CORTADO' : 'OFFLINE / SEVERED'}</span>
+            </span>
+          ) : isTraversed ? (
+            <span
+              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[9px] font-mono font-bold border ${style.badge}`}
+            >
+              <span className="relative flex h-2 w-2">
+                <span
+                  className={`animate-ping absolute inline-flex h-full w-full rounded-full ${style.pulseColor} opacity-75`}
+                />
+                <span
+                  className={`relative inline-flex rounded-full h-2 w-2 ${style.pulseColor}`}
+                />
+              </span>
+              <span>{lang === 'es' ? 'EN TRÁNSITO' : 'IN-TRANSIT'}</span>
+            </span>
+          ) : (
+            <span
+              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-mono font-medium border ${style.badge}`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
+              {node.tag}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Node Title & Subtitle */}
-      <h4 className="font-mono text-xs sm:text-sm font-bold text-white tracking-tight flex items-center gap-1.5">
+      <h4
+        className={`font-mono text-xs sm:text-sm font-bold tracking-tight flex items-center gap-1.5 ${
+          isFailed ? 'text-red-300 line-through' : 'text-white'
+        }`}
+      >
+        {isFailed && <span className="text-red-400 no-underline font-normal">✕</span>}
         {node.title}
       </h4>
       <p className="text-[11px] sm:text-xs text-zinc-400 mt-1 leading-relaxed">
         {node.subtitle[lang]}
       </p>
+
+      {/* Dynamic Lens Contract Badge */}
+      <div className="mt-3 pt-2 border-t border-white/[0.06] flex items-center justify-between gap-2">
+        {lens === 'product' && node.productBadge ? (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+            <span className="text-emerald-400">✦</span>
+            <span>{node.productBadge[lang]}</span>
+          </span>
+        ) : node.archBadge ? (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+            <span className="text-indigo-400">⚡</span>
+            <span>{node.archBadge[lang]}</span>
+          </span>
+        ) : null}
+
+        {isFailed && (
+          <span className="text-[10px] font-mono text-red-400 font-semibold">
+            {lang === 'es' ? 'Fallo inducido' : 'Fault injected'}
+          </span>
+        )}
+      </div>
     </div>
   )
 }
@@ -470,27 +907,65 @@ function NodeCard({
 function Connector({
   contract,
   bidirectional,
+  isTransmitting,
+  isSevered,
 }: {
   contract: { label: string; protocol: string; bidirectional?: boolean }
   bidirectional?: boolean
+  isTransmitting?: boolean
+  isSevered?: boolean
 }) {
   const isBidi = bidirectional ?? contract.bidirectional ?? false
 
   return (
     <div className="flex flex-col items-center justify-center py-2 px-1 relative my-0.5">
-      {/* Connector line */}
-      <div className="w-[1px] h-6 bg-gradient-to-b from-white/20 via-indigo-500/40 to-white/20" />
+      {/* Top connector line */}
+      <div
+        className={`w-[1px] h-6 transition-all duration-300 ${
+          isSevered
+            ? 'bg-red-500/40 border-r border-dashed border-red-500'
+            : isTransmitting
+            ? 'w-[2px] bg-gradient-to-b from-sky-400 via-indigo-400 to-indigo-300 shadow-[0_0_12px_rgba(56,189,248,0.7)]'
+            : 'bg-gradient-to-b from-white/20 via-indigo-500/40 to-white/20'
+        }`}
+      />
 
       {/* Contract pill */}
-      <div className="my-1.5 px-3 py-1 rounded-full bg-[#121622] border border-indigo-500/30 text-indigo-200 text-[10px] font-mono flex items-center gap-2 shadow-sm shadow-black/40">
-        <span className="text-indigo-400 font-bold">{isBidi ? '⇅' : '↓'}</span>
+      <div
+        className={`my-1.5 px-3 py-1 rounded-full text-[10px] font-mono flex items-center gap-2 shadow-sm transition-all duration-300 ${
+          isSevered
+            ? 'bg-red-950/60 border border-red-500/50 text-red-200'
+            : isTransmitting
+            ? 'bg-[#151c33] border border-sky-400 text-sky-200 shadow-md shadow-sky-500/20'
+            : 'bg-[#121622] border border-indigo-500/30 text-indigo-200 shadow-black/40'
+        }`}
+      >
+        <span
+          className={`font-bold ${
+            isSevered
+              ? 'text-red-400'
+              : isTransmitting
+              ? 'text-sky-300 animate-pulse'
+              : 'text-indigo-400'
+          }`}
+        >
+          {isSevered ? '✕' : isBidi ? '⇅' : '↓'}
+        </span>
         <span className="font-semibold text-zinc-200">{contract.label}</span>
         <span className="text-zinc-500 hidden sm:inline">&bull;</span>
         <span className="text-zinc-400 hidden sm:inline">{contract.protocol}</span>
       </div>
 
-      {/* Connector line */}
-      <div className="w-[1px] h-6 bg-gradient-to-b from-white/20 via-indigo-500/40 to-white/20" />
+      {/* Bottom connector line */}
+      <div
+        className={`w-[1px] h-6 transition-all duration-300 ${
+          isSevered
+            ? 'bg-red-500/40 border-r border-dashed border-red-500'
+            : isTransmitting
+            ? 'w-[2px] bg-gradient-to-b from-indigo-300 via-indigo-400 to-sky-400 shadow-[0_0_12px_rgba(56,189,248,0.7)]'
+            : 'bg-gradient-to-b from-white/20 via-indigo-500/40 to-white/20'
+        }`}
+      />
     </div>
   )
 }
@@ -589,15 +1064,116 @@ export function SystemTopologyViewer({
   systemId,
   rawTopology,
   lang,
+  lens: propLens,
 }: {
   systemId: string
   rawTopology: string
   lang: 'es' | 'en'
+  lens?: Lens
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [viewMode, setViewMode] = useState<'visual' | 'raw'>('visual')
   const [copied, setCopied] = useState(false)
+
+  // Lens context integration
+  const { lens: contextLens, setLens: setContextLens } = useLens()
+  const [internalLens, setInternalLens] = useState<Lens | null>(null)
+  const effectiveLens: Lens = propLens ?? internalLens ?? contextLens ?? 'arch'
+
   const structured = TOPOLOGIES[systemId]
+
+  // Interactive Simulation: Packet Trace State
+  const [traceStatus, setTraceStatus] = useState<'idle' | 'running' | 'paused' | 'completed'>('idle')
+  const [currentStepIndex, setCurrentStepIndex] = useState<number>(-1)
+  const traceTimerRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Interactive Simulation: Chaos / Fault Injection State
+  const [chaosMode, setChaosMode] = useState<boolean>(false)
+  const [failedNodeIds, setFailedNodeIds] = useState<string[]>([])
+
+  const traceSteps = structured?.traceSteps ?? []
+
+  // Clean timer on unmount or system change
+  const stopTraceTimer = useCallback(() => {
+    if (traceTimerRef.current) {
+      clearInterval(traceTimerRef.current)
+      traceTimerRef.current = null
+    }
+  }, [])
+
+  useEffect(() => {
+    return () => stopTraceTimer()
+  }, [stopTraceTimer])
+
+  // Stop simulation if systemId changes
+  const [prevSysId, setPrevSysId] = useState(systemId)
+  if (prevSysId !== systemId) {
+    setPrevSysId(systemId)
+    setTraceStatus('idle')
+    setCurrentStepIndex(-1)
+    setFailedNodeIds([])
+  }
+
+  useEffect(() => {
+    stopTraceTimer()
+  }, [systemId, stopTraceTimer])
+
+  // Helper to find all nodes in current topology
+  const getAllNodes = useCallback((): ArchitectureNode[] => {
+    if (!structured) return []
+    const list = [...structured.nodes]
+    if (structured.bifurcation) {
+      for (const branch of structured.bifurcation.branches) {
+        list.push(branch.node)
+      }
+    }
+    return list
+  }, [structured])
+
+  // Run or Resume Packet Trace
+  const handleStartTrace = () => {
+    if (traceSteps.length === 0) return
+    stopTraceTimer()
+    setTraceStatus('running')
+
+    // If starting fresh or from completed, start at 0
+    const nextStep = currentStepIndex < 0 || currentStepIndex >= traceSteps.length - 1 ? 0 : currentStepIndex + 1
+    setCurrentStepIndex(nextStep)
+
+    traceTimerRef.current = setInterval(() => {
+      setCurrentStepIndex((prev) => {
+        const next = prev + 1
+        if (next >= traceSteps.length) {
+          stopTraceTimer()
+          setTraceStatus('completed')
+          return prev
+        }
+        return next
+      })
+    }, 1300)
+  }
+
+  const handlePauseTrace = () => {
+    stopTraceTimer()
+    setTraceStatus('paused')
+  }
+
+  const handleResetTrace = () => {
+    stopTraceTimer()
+    setTraceStatus('idle')
+    setCurrentStepIndex(-1)
+  }
+
+  // Chaos Testing: Toggle Fault on Node
+  const handleToggleFault = (nodeId: string) => {
+    setFailedNodeIds((prev) =>
+      prev.includes(nodeId) ? prev.filter((id) => id !== nodeId) : [...prev, nodeId]
+    )
+  }
+
+  const handleRestoreAllNodes = () => {
+    setFailedNodeIds([])
+  }
 
   // ESC key listener & body scroll lock
   useEffect(() => {
@@ -625,6 +1201,21 @@ export function SystemTopologyViewer({
     }
   }
 
+  // Active traversed nodes calculation
+  const currentStepDef = currentStepIndex >= 0 && currentStepIndex < traceSteps.length ? traceSteps[currentStepIndex] : null
+  const activeTraversedNodeIds = currentStepDef
+    ? Array.isArray(currentStepDef.nodeId)
+      ? currentStepDef.nodeId
+      : [currentStepDef.nodeId]
+    : []
+
+  // Telemetry logs up to currentStepIndex
+  const activeTelemetryLogs = traceSteps.slice(0, currentStepIndex + 1)
+
+  // Collect active resilience fallbacks for currently failed nodes
+  const allNodes = getAllNodes()
+  const failedNodes = allNodes.filter((n) => failedNodeIds.includes(n.id))
+
   return (
     <>
       {/* ─── COMPACT INLINE SPEC CARD (Balanced with Product View) ─── */}
@@ -650,20 +1241,37 @@ export function SystemTopologyViewer({
         {/* Mini Pipeline Preview */}
         <MiniPipelinePreview systemId={systemId} lang={lang} />
 
-        {/* Trigger to Open Full Modal Inspector */}
-        <button
-          type="button"
-          onClick={() => setIsModalOpen(true)}
-          className="w-full py-2.5 px-3 rounded-lg border border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/15 hover:border-indigo-500/50 text-indigo-300 hover:text-white text-xs font-mono font-medium transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 group shadow-sm shadow-indigo-500/10"
-        >
-          <span className="text-indigo-400 group-hover:scale-110 transition-transform">📐</span>
-          <span>
-            {lang === 'es'
-              ? 'Inspeccionar Blueprint de Arquitectura & Contratos'
-              : 'Inspect Full Architecture Blueprint & Contracts'}
-          </span>
-          <span className="text-xs text-indigo-400 group-hover:translate-x-0.5 transition-transform">↗</span>
-        </button>
+        {/* Action Row: Primary Blueprint Inspector + Fast Simulator Launch */}
+        <div className="flex flex-col sm:flex-row items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              setIsModalOpen(true)
+            }}
+            className="flex-1 w-full py-2.5 px-3 rounded-lg border border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/15 hover:border-indigo-500/50 text-indigo-300 hover:text-white text-xs font-mono font-medium transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 group shadow-sm shadow-indigo-500/10"
+          >
+            <span className="text-indigo-400 group-hover:scale-110 transition-transform">📐</span>
+            <span>
+              {lang === 'es'
+                ? 'Inspeccionar Blueprint & Simulación'
+                : 'Inspect Blueprint & Simulation'}
+            </span>
+            <span className="text-xs text-indigo-400 group-hover:translate-x-0.5 transition-transform">↗</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setIsModalOpen(true)
+              setTimeout(() => handleStartTrace(), 250)
+            }}
+            className="w-full sm:w-auto py-2.5 px-3 rounded-lg border border-sky-500/30 bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 text-xs font-mono font-medium transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5"
+            title={lang === 'es' ? 'Abrir e iniciar simulador de paquetes' : 'Open and start packet simulator'}
+          >
+            <span className="text-sky-400">▶</span>
+            <span>{lang === 'es' ? 'Packet Trace' : 'Packet Trace'}</span>
+          </button>
+        </div>
       </div>
 
       {/* ─── FULL-SCREEN ARCHITECTURE BLUEPRINT MODAL ─── */}
@@ -676,13 +1284,17 @@ export function SystemTopologyViewer({
             if (e.target === e.currentTarget) setIsModalOpen(false)
           }}
         >
-          <div className="relative w-full max-w-4xl max-h-[90vh] bg-[#07090d] border border-white/15 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="relative w-full max-w-4xl max-h-[92vh] bg-[#07090d] border border-white/15 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
             {/* Modal Header */}
             <div className="p-4 sm:p-5 border-b border-white/[0.08] bg-[#0a0d13] flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">
                     {lang === 'es' ? '📐 Blueprint Técnico & Contratos' : '📐 Architecture Blueprint & Contracts'}
+                  </span>
+                  <span className="text-zinc-600 font-mono text-[10px]">&bull;</span>
+                  <span className="font-mono text-[10px] text-indigo-400 uppercase tracking-wider font-semibold">
+                    Interactive Engine
                   </span>
                 </div>
                 {structured && (
@@ -701,6 +1313,7 @@ export function SystemTopologyViewer({
               <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
                 <div className="flex items-center gap-1 p-1 rounded-lg border border-white/10 bg-white/[0.02]">
                   <button
+                    type="button"
                     onClick={() => setViewMode('visual')}
                     className={`px-3 py-1.5 rounded-md text-xs font-mono transition-all cursor-pointer ${
                       viewMode === 'visual'
@@ -711,6 +1324,7 @@ export function SystemTopologyViewer({
                     {lang === 'es' ? 'Esquema Visual' : 'Visual Blueprint'}
                   </button>
                   <button
+                    type="button"
                     onClick={() => setViewMode('raw')}
                     className={`px-3 py-1.5 rounded-md text-xs font-mono transition-all cursor-pointer ${
                       viewMode === 'raw'
@@ -723,6 +1337,7 @@ export function SystemTopologyViewer({
                 </div>
 
                 <button
+                  type="button"
                   onClick={() => setIsModalOpen(false)}
                   className="p-1.5 rounded-lg border border-white/10 hover:border-white/30 text-zinc-400 hover:text-white transition-colors cursor-pointer"
                   title={lang === 'es' ? 'Cerrar (Esc)' : 'Close (Esc)'}
@@ -735,9 +1350,129 @@ export function SystemTopologyViewer({
               </div>
             </div>
 
+            {/* ─── INTERACTIVE CONTROL DECK (Packet Trace + Chaos Mode + Lens) ─── */}
+            {viewMode === 'visual' && structured && (
+              <div className="px-4 py-2.5 bg-[#0a0e17] border-b border-white/[0.08] flex flex-wrap items-center justify-between gap-3 text-xs font-mono shrink-0">
+                {/* Left: Simulation & Packet Trace Controls */}
+                <div className="flex flex-wrap items-center gap-2">
+                  {traceStatus === 'running' ? (
+                    <button
+                      type="button"
+                      onClick={handlePauseTrace}
+                      className="px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+                    >
+                      <span>⏸</span>
+                      <span>{lang === 'es' ? 'Pausar Trace' : 'Pause Trace'}</span>
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleStartTrace}
+                      className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-md shadow-indigo-600/30"
+                    >
+                      <span>▶</span>
+                      <span>
+                        {traceStatus === 'paused'
+                          ? lang === 'es' ? 'Continuar Trace' : 'Resume Trace'
+                          : lang === 'es' ? '▶ Run Packet Trace' : '▶ Run Packet Trace'}
+                      </span>
+                    </button>
+                  )}
+
+                  {(traceStatus !== 'idle' || currentStepIndex >= 0) && (
+                    <button
+                      type="button"
+                      onClick={handleResetTrace}
+                      className="px-2.5 py-1.5 rounded-lg border border-white/10 bg-white/[0.04] text-zinc-300 hover:text-white hover:bg-white/[0.08] transition-colors cursor-pointer"
+                      title={lang === 'es' ? 'Reiniciar simulación' : 'Reset simulation'}
+                    >
+                      <span>↺</span>
+                      <span className="hidden sm:inline ml-1">{lang === 'es' ? 'Reiniciar' : 'Reset'}</span>
+                    </button>
+                  )}
+
+                  {traceStatus === 'running' && (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-sky-500/10 text-sky-300 border border-sky-500/20 text-[11px]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-ping" />
+                      <span>{lang === 'es' ? `Paso ${currentStepIndex + 1}/${traceSteps.length}` : `Step ${currentStepIndex + 1}/${traceSteps.length}`}</span>
+                    </span>
+                  )}
+                </div>
+
+                {/* Right: Chaos Mode & Dynamic Lens Control */}
+                <div className="flex flex-wrap items-center gap-2">
+                  {/* Chaos Testing Toggle */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setChaosMode((prev) => !prev)
+                      if (chaosMode) {
+                        setFailedNodeIds([])
+                      }
+                    }}
+                    className={`px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1.5 transition-all cursor-pointer border ${
+                      chaosMode
+                        ? 'bg-red-500/20 border-red-500/50 text-red-200 shadow-[0_0_15px_rgba(239,68,68,0.25)]'
+                        : 'bg-white/[0.04] border-white/10 text-zinc-300 hover:text-white hover:border-white/20'
+                    }`}
+                  >
+                    <span className={chaosMode ? 'animate-pulse text-red-400' : 'text-amber-400'}>⚡</span>
+                    <span>
+                      {chaosMode
+                        ? lang === 'es' ? 'Chaos Activo' : 'Chaos Active'
+                        : lang === 'es' ? '⚡ Chaos Mode' : '⚡ Fault Injection'}
+                    </span>
+                  </button>
+
+                  {chaosMode && failedNodeIds.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={handleRestoreAllNodes}
+                      className="px-2.5 py-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 text-[11px] font-medium transition-colors cursor-pointer"
+                    >
+                      <span>✓</span>
+                      <span className="ml-1">{lang === 'es' ? 'Restaurar Nodos' : 'Restore All'}</span>
+                    </button>
+                  )}
+
+                  {/* Lens Switcher */}
+                  <div className="flex items-center gap-1 p-0.5 rounded-lg border border-white/10 bg-white/[0.02]">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setInternalLens('product')
+                        setContextLens('product')
+                      }}
+                      className={`px-2 py-1 rounded text-[10px] font-mono transition-colors cursor-pointer ${
+                        effectiveLens === 'product'
+                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold'
+                          : 'text-zinc-400 hover:text-white'
+                      }`}
+                    >
+                      🎯 {lang === 'es' ? 'Producto' : 'Product'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setInternalLens('arch')
+                        setContextLens('arch')
+                      }}
+                      className={`px-2 py-1 rounded text-[10px] font-mono transition-colors cursor-pointer ${
+                        effectiveLens === 'arch'
+                          ? 'bg-indigo-600 text-white font-bold shadow-sm'
+                          : 'text-zinc-400 hover:text-white'
+                      }`}
+                    >
+                      📐 {lang === 'es' ? 'Arquitectura' : 'Arch'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Architecture Spec Attributes Strip in Modal */}
             {structured && (
-              <div className="px-4 py-2.5 bg-black/50 border-b border-white/[0.06] grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] font-mono shrink-0">
+              <div className="px-4 py-2 bg-black/50 border-b border-white/[0.06] grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] font-mono shrink-0">
                 <div className="flex items-center gap-1.5 text-zinc-400">
                   <span className="text-zinc-600">PATTERN:</span>
                   <span className="text-zinc-200 truncate">{structured.pattern[lang]}</span>
@@ -754,65 +1489,290 @@ export function SystemTopologyViewer({
             )}
 
             {/* Modal Body Canvas */}
-            <div className="p-4 sm:p-6 bg-[#080a0f] [background-image:radial-gradient(rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:20px_20px] overflow-y-auto flex-1">
+            <div className="p-4 sm:p-6 bg-[#080a0f] [background-image:radial-gradient(rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:20px_20px] overflow-y-auto flex-1 space-y-5">
               {viewMode === 'visual' && structured ? (
                 <div>
+                  {/* Chaos Mode Guidance Banner */}
+                  {chaosMode && (
+                    <div className="mb-4 p-3 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-200 text-xs font-mono flex items-start gap-2.5 shadow-md">
+                      <span className="text-amber-400 text-base leading-none">⚡</span>
+                      <div className="flex-1">
+                        <p className="font-semibold text-amber-300">
+                          {lang === 'es'
+                            ? 'Chaos Testing / Inyección de Fallos Activa'
+                            : 'Chaos Testing / Fault Injection Mode Active'}
+                        </p>
+                        <p className="text-[11px] text-zinc-300 mt-0.5">
+                          {lang === 'es'
+                            ? 'Hacé click en cualquier nodo para simular una caída o conexión cortada y observar el protocolo de resiliencia.'
+                            : 'Click any topology node to simulate failure or severed connection and observe the resilience fallback protocol.'}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Contextual Resilience Fallback Protocol Banner */}
+                  {failedNodes.length > 0 && (
+                    <div className="mb-4 p-4 rounded-xl border border-red-500/40 bg-red-950/30 text-xs font-mono space-y-2 shadow-lg shadow-red-950/30 animate-in fade-in duration-200">
+                      <div className="flex items-center justify-between border-b border-red-500/20 pb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-red-400 font-bold text-sm">🛡</span>
+                          <span className="font-bold text-red-200 uppercase tracking-wider text-[11px]">
+                            {lang === 'es'
+                              ? 'Protocolo de Resiliencia & Tolerancia a Fallos Activado'
+                              : 'Resilience Fallback Protocol Engaged'}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleRestoreAllNodes}
+                          className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-semibold hover:bg-emerald-500/30 transition-colors cursor-pointer"
+                        >
+                          {lang === 'es' ? 'Restaurar Todo' : 'Restore All'}
+                        </button>
+                      </div>
+
+                      <div className="space-y-1.5 pt-1">
+                        {failedNodes.map((fn) => (
+                          <div key={fn.id} className="flex items-start gap-2 text-zinc-300">
+                            <span className="text-red-400 shrink-0 font-bold">⚠</span>
+                            <div className="flex-1">
+                              <span className="font-bold text-white mr-1.5">[{fn.title}]:</span>
+                              <span className="text-red-200 font-medium">
+                                {fn.resilienceFallback
+                                  ? fn.resilienceFallback[lang]
+                                  : lang === 'es'
+                                  ? 'Aislamiento de fallo activo. Circuit breaker activado para prevenir cascada.'
+                                  : 'Fault isolated. Circuit breaker tripped to prevent cascade.'}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Architecture Topology Diagram */}
                   {structured.layout === 'pipeline' ? (
                     /* Linear Sequenced Pipeline */
                     <div className="max-w-2xl mx-auto space-y-1">
-                      {structured.nodes.map((node) => (
-                        <div key={node.id}>
-                          <NodeCard node={node} lang={lang} />
-                          {node.contractToNext && (
-                            <Connector contract={node.contractToNext} />
-                          )}
-                        </div>
-                      ))}
+                      {structured.nodes.map((node) => {
+                        const isTraversed = activeTraversedNodeIds.includes(node.id)
+                        const isFailed = failedNodeIds.includes(node.id)
+
+                        return (
+                          <div key={node.id}>
+                            <NodeCard
+                              node={node}
+                              lang={lang}
+                              lens={effectiveLens}
+                              isTraversed={isTraversed}
+                              isFailed={isFailed}
+                              chaosMode={chaosMode}
+                              onNodeClick={() => handleToggleFault(node.id)}
+                            />
+                            {node.contractToNext && (
+                              <Connector
+                                contract={node.contractToNext}
+                                isTransmitting={isTraversed}
+                                isSevered={isFailed}
+                              />
+                            )}
+                          </div>
+                        )
+                      })}
                     </div>
                   ) : (
                     /* Bifurcated Hub-and-Spoke (Gripm) */
                     <div className="max-w-2xl mx-auto space-y-1">
                       {/* Stage 1: Consumer Host */}
-                      <NodeCard node={structured.nodes[0]} lang={lang} />
+                      <NodeCard
+                        node={structured.nodes[0]}
+                        lang={lang}
+                        lens={effectiveLens}
+                        isTraversed={activeTraversedNodeIds.includes(structured.nodes[0].id)}
+                        isFailed={failedNodeIds.includes(structured.nodes[0].id)}
+                        chaosMode={chaosMode}
+                        onNodeClick={() => handleToggleFault(structured.nodes[0].id)}
+                      />
 
                       {/* Connector Host -> Daemon */}
                       {structured.nodes[0].contractToNext && (
-                        <Connector contract={structured.nodes[0].contractToNext} />
+                        <Connector
+                          contract={structured.nodes[0].contractToNext}
+                          isTransmitting={
+                            activeTraversedNodeIds.includes(structured.nodes[0].id) ||
+                            activeTraversedNodeIds.includes(structured.nodes[1].id)
+                          }
+                          isSevered={
+                            failedNodeIds.includes(structured.nodes[0].id) ||
+                            failedNodeIds.includes(structured.nodes[1].id)
+                          }
+                        />
                       )}
 
                       {/* Stage 2: Central Daemon Hub */}
-                      <NodeCard node={structured.nodes[1]} lang={lang} />
+                      <NodeCard
+                        node={structured.nodes[1]}
+                        lang={lang}
+                        lens={effectiveLens}
+                        isTraversed={activeTraversedNodeIds.includes(structured.nodes[1].id)}
+                        isFailed={failedNodeIds.includes(structured.nodes[1].id)}
+                        chaosMode={chaosMode}
+                        onNodeClick={() => handleToggleFault(structured.nodes[1].id)}
+                      />
 
                       {/* Bifurcated Split Indicator */}
                       <div className="flex flex-col items-center justify-center py-2 px-1 relative my-0.5">
-                        <div className="w-[1px] h-5 bg-gradient-to-b from-white/20 via-indigo-500/40 to-white/20" />
-                        <div className="my-1 px-3 py-1 rounded-full bg-[#121622] border border-indigo-500/30 text-indigo-200 text-[10px] font-mono flex items-center gap-1.5">
+                        <div
+                          className={`w-[1px] h-5 transition-colors ${
+                            failedNodeIds.includes(structured.nodes[1].id)
+                              ? 'bg-red-500/40'
+                              : 'bg-gradient-to-b from-white/20 via-indigo-500/40 to-white/20'
+                          }`}
+                        />
+                        <div className="my-1 px-3 py-1 rounded-full bg-[#121622] border border-indigo-500/30 text-indigo-200 text-[10px] font-mono flex items-center gap-1.5 shadow-sm shadow-black/40">
                           <span className="text-indigo-400 font-bold">⇄</span>
                           <span>
-                            {lang === 'es' ? 'Bifurcación de Estados Concurrente' : 'Concurrent State Bifurcation'}
+                            {lang === 'es'
+                              ? 'Bifurcación de Estados Concurrente'
+                              : 'Concurrent State Bifurcation'}
                           </span>
                         </div>
-                        <div className="w-[1px] h-5 bg-gradient-to-b from-white/20 via-indigo-500/40 to-white/20" />
+                        <div
+                          className={`w-[1px] h-5 transition-colors ${
+                            failedNodeIds.includes(structured.nodes[1].id)
+                              ? 'bg-red-500/40'
+                              : 'bg-gradient-to-b from-white/20 via-indigo-500/40 to-white/20'
+                          }`}
+                        />
                       </div>
 
                       {/* Branches Grid */}
                       {structured.bifurcation && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                          {structured.bifurcation.branches.map((b) => (
-                            <div key={b.node.id} className="space-y-2">
-                              <div className="px-2.5 py-1 rounded-md bg-white/[0.02] border border-white/[0.06] text-[10px] font-mono text-zinc-400 text-center truncate">
-                                {b.contract}
+                          {structured.bifurcation.branches.map((b) => {
+                            const isBranchTraversed = activeTraversedNodeIds.includes(b.node.id)
+                            const isBranchFailed = failedNodeIds.includes(b.node.id)
+
+                            return (
+                              <div key={b.node.id} className="space-y-2">
+                                <div
+                                  className={`px-2.5 py-1 rounded-md text-[10px] font-mono text-center truncate transition-colors ${
+                                    isBranchFailed
+                                      ? 'bg-red-950/40 border border-red-500/30 text-red-300'
+                                      : isBranchTraversed
+                                      ? 'bg-indigo-950/60 border border-indigo-500/40 text-indigo-200 font-semibold'
+                                      : 'bg-white/[0.02] border border-white/[0.06] text-zinc-400'
+                                  }`}
+                                >
+                                  {b.contract}
+                                </div>
+                                <NodeCard
+                                  node={b.node}
+                                  lang={lang}
+                                  lens={effectiveLens}
+                                  isTraversed={isBranchTraversed}
+                                  isFailed={isBranchFailed}
+                                  chaosMode={chaosMode}
+                                  onNodeClick={() => handleToggleFault(b.node.id)}
+                                />
                               </div>
-                              <NodeCard node={b.node} lang={lang} />
-                            </div>
-                          ))}
+                            )
+                          })}
                         </div>
                       )}
                     </div>
                   )}
 
+                  {/* ─── SLEEK TRACE TELEMETRY LOG BAR ─── */}
+                  <div className="mt-8 border border-white/10 rounded-xl bg-black/75 p-3.5 backdrop-blur font-mono text-xs shadow-inner">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.08] pb-2.5 mb-2.5">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`w-2 h-2 rounded-full ${
+                            traceStatus === 'running'
+                              ? 'bg-sky-400 animate-ping'
+                              : traceStatus === 'completed'
+                              ? 'bg-emerald-400'
+                              : 'bg-zinc-600'
+                          }`}
+                        />
+                        <span className="text-[11px] font-bold text-zinc-200 uppercase tracking-wider">
+                          {lang === 'es' ? 'Telemetría de Tráfico en Vivo (Trace Telemetry)' : 'Live Trace Telemetry Stream'}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-3 text-[10px] text-zinc-400">
+                        {currentStepIndex >= 0 ? (
+                          <span>
+                            {lang === 'es' ? 'Latencia acumulada:' : 'Accumulated latency:'}{' '}
+                            <span className="text-sky-300 font-bold">
+                              {traceSteps[currentStepIndex]?.timeOffset ?? '+0ms'}
+                            </span>
+                          </span>
+                        ) : null}
+                        <span className="text-zinc-600 hidden sm:inline">&bull;</span>
+                        <span className="text-zinc-400">
+                          {traceStatus === 'running'
+                            ? lang === 'es' ? 'Transfiriendo paquetes...' : 'Streaming packets...'
+                            : traceStatus === 'completed'
+                            ? lang === 'es' ? '✓ Trace Completado (0 paquetes perdidos)' : '✓ Trace Completed (0 packets dropped)'
+                            : lang === 'es' ? 'Listo para simular' : 'Ready to simulate'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Step-by-step Telemetry Stream */}
+                    {activeTelemetryLogs.length === 0 ? (
+                      <div className="py-3 text-center text-zinc-500 text-[11px]">
+                        {lang === 'es'
+                          ? 'Presioná "▶ Run Packet Trace" para despachar una secuencia de eventos y visualizar latencias paso a paso.'
+                          : 'Press "▶ Run Packet Trace" to dispatch event telemetry sequence and inspect step micro-latencies.'}
+                      </div>
+                    ) : (
+                      <div className="space-y-1.5 max-h-44 overflow-y-auto pr-1">
+                        {activeTelemetryLogs.map((log) => {
+                          const isCurrent = log.step === currentStepIndex
+                          const nodeCategory = log.category
+                          const catBadge = CATEGORY_STYLES[nodeCategory].badge
+
+                          return (
+                            <div
+                              key={log.step}
+                              className={`p-2 rounded-lg border text-[11px] transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-2 ${
+                                isCurrent
+                                  ? 'bg-indigo-950/40 border-sky-400/40 text-white shadow-sm'
+                                  : 'bg-white/[0.02] border-white/[0.04] text-zinc-400'
+                              }`}
+                            >
+                              <div className="flex items-start sm:items-center gap-2">
+                                <span className="font-bold text-sky-400 shrink-0 font-mono">
+                                  [{log.timeOffset}]
+                                </span>
+                                <span className={`px-1.5 py-0.5 rounded text-[9px] border font-mono shrink-0 ${catBadge}`}>
+                                  {log.action[lang]}
+                                </span>
+                                <span className="text-zinc-300 truncate">
+                                  {log.detail[lang]}
+                                </span>
+                              </div>
+
+                              <div className="flex items-center gap-1.5 text-[10px] text-zinc-500 shrink-0 font-mono">
+                                <span className="text-emerald-400">ACK 200</span>
+                                {isCurrent && (
+                                  <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-ping" />
+                                )}
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
+                  </div>
+
                   {/* Architecture Legend */}
-                  <div className="mt-8 pt-4 border-t border-white/[0.06] flex flex-wrap items-center justify-between gap-3 text-[10px] font-mono text-zinc-500">
+                  <div className="mt-6 pt-4 border-t border-white/[0.06] flex flex-wrap items-center justify-between gap-3 text-[10px] font-mono text-zinc-500">
                     <div className="flex flex-wrap items-center gap-3">
                       <span className="flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
@@ -850,6 +1810,7 @@ export function SystemTopologyViewer({
                       </span>
                     </div>
                     <button
+                      type="button"
                       onClick={handleCopy}
                       className="px-2 py-0.5 rounded bg-white/[0.06] hover:bg-white/[0.12] text-zinc-300 font-mono text-[10px] transition-colors cursor-pointer flex items-center gap-1"
                     >
@@ -888,6 +1849,7 @@ export function SystemTopologyViewer({
                 {lang === 'es' ? 'Presioná Esc o hacé click afuera para cerrar' : 'Press Esc or click outside to close'}
               </span>
               <button
+                type="button"
                 onClick={() => setIsModalOpen(false)}
                 className="px-4 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium transition-colors ml-auto cursor-pointer"
               >

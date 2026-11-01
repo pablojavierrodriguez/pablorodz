@@ -9,7 +9,7 @@ export function Hero() {
   const { lang } = useLanguage()
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center pt-14 px-5 overflow-hidden">
+    <section className="relative min-h-[calc(100vh-2.5rem)] flex flex-col items-center justify-center pt-20 pb-14 px-5 overflow-hidden">
       {/* Ambient glow — mineral/graphite, NOT neon */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-zinc-400/5 rounded-full blur-[120px]" />
@@ -87,15 +87,15 @@ export function Hero() {
         </div>
 
         {/* Divider / Scroll hint */}
-        <div className="mt-16 flex flex-col items-center gap-2">
-          <div className="flex items-center gap-6 text-xs font-mono text-zinc-600">
-            <a href={profile.links.github} target="_blank" rel="noopener noreferrer" className="hover:text-zinc-400 transition-colors cursor-pointer">GitHub</a>
+        <div className="mt-10 sm:mt-12 flex flex-col items-center gap-2">
+          <div className="flex items-center gap-4 sm:gap-6 text-xs font-mono text-zinc-500">
+            <a href={profile.links.github} target="_blank" rel="noopener noreferrer" className="hover:text-zinc-300 transition-colors cursor-pointer">GitHub</a>
             <span>·</span>
-            <a href={profile.links.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-zinc-400 transition-colors cursor-pointer">LinkedIn</a>
+            <a href={profile.links.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-zinc-300 transition-colors cursor-pointer">LinkedIn</a>
             <span>·</span>
-            <span className="text-zinc-700">{profile.location.timezone}</span>
+            <span className="text-zinc-600">{profile.location.timezone}</span>
           </div>
-          <div className="w-px h-10 bg-gradient-to-b from-zinc-700 to-transparent mt-4" />
+          <div className="w-px h-8 bg-gradient-to-b from-zinc-700 to-transparent mt-2.5" />
         </div>
       </div>
     </section>
