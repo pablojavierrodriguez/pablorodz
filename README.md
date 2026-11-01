@@ -16,7 +16,7 @@ This repository hosts the personal website and portfolio for **Pablo Javier Rodr
 
 ### Key Capabilities
 
-- **Living System Index:** A curated, interactive index of public open-source tools ([`gripm`](https://github.com/pablojavierrodriguez/gripm), [`gripm-playbook`](https://github.com/pablojavierrodriguez/gripm-playbook)), private enterprise systems (`c3admin`), and incubating projects (`dom-personalfinances`).
+- **Living System Index:** A curated, interactive index of public open-source tools ([`gripm`](https://github.com/pablojavierrodriguez/gripm), [`gripm-playbook`](https://github.com/pablojavierrodriguez/gripm-playbook)), private enterprise systems (`c3admin`), and incubating projects (`DOM`).
 - **Dual-Lens Toggle:** Allows visitors to view every system from either a **Product Lens** (value proposition, operational impact, and live demo) or an **Architecture Lens** (system topology schematic, full tech stack, and protocol contracts).
 - **Architectural Chronicle:** A career trajectory structured around systems built, transformations led, and measurable operational outcomes (e.g., Telecom / Personal OSS ecosystem serving 130K+ incidents/month, +30% automation, -25% MTTR).
 - **Universal Design Pillars:** Four foundational principles for resilient, vendor-independent, human-and-machine-friendly digital products.

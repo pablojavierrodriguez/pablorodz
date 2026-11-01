@@ -26,14 +26,12 @@ function SystemRow({
   system,
   isSelected,
   onSelect,
-  lens,
   lang,
   liveStats,
 }: {
   system: SystemProject
   isSelected: boolean
   onSelect: () => void
-  lens: Lens
   lang: 'es' | 'en'
   liveStats?: ProjectLiveStats
 }) {
@@ -77,7 +75,7 @@ function SystemRow({
             ) : (
               system.lifecycle[lang] && (
                 <span className="text-[10px] font-mono text-zinc-400 hidden sm:inline">
-                  ({system.lifecycle[lang]})
+                  &bull; {system.lifecycle[lang]}
                 </span>
               )
             )}
@@ -94,41 +92,105 @@ function SystemRow({
             )}
           </div>
 
-          {/* DYNAMIC ROW CONTENT BASED ON ACTIVE LENS */}
-          {lens === 'product' ? (
-            <p className="text-xs text-zinc-400 leading-relaxed transition-opacity duration-200">
+            {/* Stable tagline: fixed height across views, zero layout shifting */}
+            <p className="text-xs text-zinc-400 leading-relaxed pt-0.5">
               {system.tagline[lang]}
             </p>
-          ) : (
-            <div className="flex flex-wrap items-center gap-1.5 pt-0.5 transition-opacity duration-200">
-              {system.stack.slice(0, 5).map((tech) => (
-                <span
-                  key={tech}
-                  className="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.08] text-[10px] font-mono text-zinc-300"
-                >
-                  {tech}
-                </span>
-              ))}
-              {system.stack.length > 5 && (
-                <span className="text-[10px] font-mono text-zinc-500">
-                  +{system.stack.length - 5}
-                </span>
-              )}
-            </div>
-          )}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 pl-11 sm:pl-0 font-mono text-[11px] text-zinc-500 shrink-0">
+          <span className="text-xs text-zinc-400 group-hover:text-white transition-colors flex items-center gap-1">
+            {isSelected ? (lang === 'es' ? 'Inspeccionando' : 'Inspecting') : (lang === 'es' ? 'Ver Ficha' : 'View Spec')}
+            <span className={`inline-block transition-transform duration-200 ${isSelected ? 'translate-x-1 text-white' : 'group-hover:translate-x-1'}`}>
+              →
+            </span>
+          </span>
         </div>
       </div>
+    )
+  }
 
-      <div className="flex items-center gap-2 pl-11 sm:pl-0 font-mono text-[11px] text-zinc-500 shrink-0">
-        <span className="text-xs text-zinc-400 group-hover:text-white transition-colors flex items-center gap-1">
-          {isSelected ? (lang === 'es' ? 'Inspeccionando' : 'Inspecting') : (lang === 'es' ? 'Ver Ficha' : 'View Spec')}
-          <span className={`inline-block transition-transform duration-200 ${isSelected ? 'translate-x-1 text-white' : 'group-hover:translate-x-1'}`}>
-            →
-          </span>
-        </span>
-      </div>
-    </div>
-  )
+interface ProductSpec {
+  audience: { es: string; en: string }
+  value: { es: string; en: string }
+  delivery: { es: string; en: string }
+  highlight: { es: string; en: string }
+}
+
+const PRODUCT_SPECS: Record<string, ProductSpec> = {
+  gripm: {
+    audience: {
+      es: 'Devs & Agentes de IA',
+      en: 'Devs & AI Agents',
+    },
+    value: {
+      es: 'Control Soberano en Git',
+      en: 'Sovereign Git Control',
+    },
+    delivery: {
+      es: 'Localhost · CLI & Web',
+      en: 'Localhost · CLI & Web',
+    },
+    highlight: {
+      es: 'Soberanía total de datos e integración nativa con agentes mediante MCP.',
+      en: 'Complete data sovereignty and native agent integration via MCP.',
+    },
+  },
+  'gripm-playbook': {
+    audience: {
+      es: 'Tech Leads & Devs',
+      en: 'Tech Leads & Devs',
+    },
+    value: {
+      es: 'Entrega Determinística',
+      en: 'Deterministic Delivery',
+    },
+    delivery: {
+      es: 'Markdown + Gherkin AC',
+      en: 'Markdown + Gherkin AC',
+    },
+    highlight: {
+      es: 'Gobernanza con compuertas de QA estáticas y contratos tipados entre roles.',
+      en: 'Governance with static QA gates and typed contracts between roles.',
+    },
+  },
+  c3admin: {
+    audience: {
+      es: 'Empresas B2B & Ops',
+      en: 'B2B Companies & Ops',
+    },
+    value: {
+      es: 'Aislamiento & Auditoría',
+      en: 'Isolation & Audit Trail',
+    },
+    delivery: {
+      es: 'Web SaaS Multi-Tenant',
+      en: 'Multi-Tenant Web SaaS',
+    },
+    highlight: {
+      es: 'Control administrativo integral sin fricción y cumplimiento estricto.',
+      en: 'Frictionless administrative control with strict compliance.',
+    },
+  },
+  dom: {
+    audience: {
+      es: 'Soberanía & Privacidad',
+      en: 'Sovereignty & Privacy',
+    },
+    value: {
+      es: 'Zero-Knowledge Crypto',
+      en: 'Zero-Knowledge Crypto',
+    },
+    delivery: {
+      es: 'Offline-first Web App',
+      en: 'Offline-first Web App',
+    },
+    highlight: {
+      es: 'Contabilidad de partida doble con encriptación AES-GCM en el dispositivo.',
+      en: 'Double-entry bookkeeping with AES-GCM encryption on your device.',
+    },
+  },
 }
 
 function SpecSheet({
@@ -144,6 +206,8 @@ function SpecSheet({
   lang: 'es' | 'en'
   liveStats?: ProjectLiveStats
 }) {
+  const prodSpec = PRODUCT_SPECS[system.id]
+
   return (
     <div className="p-6 rounded-2xl bg-black/40 border border-white/10 shadow-2xl relative overflow-hidden transition-all duration-300">
       
@@ -184,64 +248,139 @@ function SpecSheet({
           </h3>
         </div>
 
-        {/* INLINE DUAL-LENS TOGGLE (Directly inside Inspector for maximum clarity) */}
+        {/* INLINE DUAL-LENS TOGGLE (Smooth Segmented Control) */}
         <div className="flex items-center p-1 rounded-xl border border-white/10 bg-white/[0.03] self-start sm:self-auto">
           <button
             onClick={() => onLensChange('product')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
               lens === 'product'
                 ? 'bg-white text-zinc-950 font-semibold shadow-md'
                 : 'text-zinc-400 hover:text-white'
             }`}
           >
-            🎯 {t(lang, 'systems.lens_product')}
+            <span>🎯</span>
+            <span>{t(lang, 'systems.lens_product')}</span>
           </button>
           <button
             onClick={() => onLensChange('arch')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
               lens === 'arch'
                 ? 'bg-indigo-600 text-white font-semibold shadow-md shadow-indigo-600/30'
                 : 'text-zinc-400 hover:text-white'
             }`}
           >
-            📐 {t(lang, 'systems.lens_arch')}
+            <span>📐</span>
+            <span>{t(lang, 'systems.lens_arch')}</span>
           </button>
         </div>
       </div>
 
-      {/* Narrative view */}
-      <div className="py-4">
-        <p className="text-sm text-zinc-200 leading-relaxed font-normal">
+      {/* Spec Narrative: Balanced height for zero layout displacement */}
+      <div className="py-3.5 min-h-[3.75rem] flex items-center">
+        <p className="text-sm text-zinc-200 leading-relaxed font-normal transition-opacity duration-200">
           {lens === 'product' ? system.productView[lang] : system.archView[lang]}
         </p>
       </div>
 
-      {/* ARCHITECTURE VIEW: TOPOLOGY & DEEP STACK */}
-      {lens === 'arch' && (
-        <div className="space-y-4 pt-2 transition-all duration-300">
+      {/* DUAL-LENS DYNAMIC BODY (Symmetrical Heights & Clean Rendering) */}
+      <div className="transition-opacity duration-200 ease-in-out">
+        {lens === 'product' ? (
+          /* PRODUCT LENS CONTENT */
+          <div className="rounded-xl border border-white/[0.08] bg-[#07090d]/80 p-3.5 space-y-3">
+            {prodSpec && (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 px-3 py-2 bg-black/30 rounded-lg border border-white/[0.04] text-[10px] font-mono">
+                <div className="text-zinc-400">
+                  <span className="text-zinc-600">AUDIENCE: </span>
+                  <span className="text-zinc-200 font-medium">{prodSpec.audience[lang]}</span>
+                </div>
+                <div className="text-zinc-400">
+                  <span className="text-zinc-600">VALUE: </span>
+                  <span className="text-emerald-400 font-medium">{prodSpec.value[lang]}</span>
+                </div>
+                <div className="text-zinc-400">
+                  <span className="text-zinc-600">DELIVERY: </span>
+                  <span className="text-sky-300 font-medium">{prodSpec.delivery[lang]}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Product Key Capability Pill */}
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-black/40 border border-white/[0.05] text-[11px] text-zinc-300">
+              <span className="text-amber-400 font-bold">✦</span>
+              <span className="font-mono text-[10px] text-zinc-400 uppercase tracking-wider font-semibold">
+                {lang === 'es' ? 'Diferencial clave:' : 'Key Advantage:'}
+              </span>
+              <span className="text-zinc-200 truncate">
+                {prodSpec ? prodSpec.highlight[lang] : system.tagline[lang]}
+              </span>
+            </div>
+
+            {/* Product Context Action Button */}
+            {system.links.demo ? (
+              <a
+                href={system.links.demo}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-2.5 px-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/15 hover:border-emerald-500/50 text-emerald-300 hover:text-white text-xs font-mono font-medium transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 group shadow-sm shadow-emerald-500/10"
+              >
+                <span>🚀</span>
+                <span>
+                  {lang === 'es' ? 'Explorar Experiencia en Vivo (Demo)' : 'Launch Live Product Demo'}
+                </span>
+                <span className="text-xs text-emerald-400 group-hover:translate-x-0.5 transition-transform">↗</span>
+              </a>
+            ) : system.links.github ? (
+              <a
+                href={system.links.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-2.5 px-3 rounded-lg border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] hover:border-white/20 text-zinc-300 hover:text-white text-xs font-mono font-medium transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 group"
+              >
+                <span>📦</span>
+                <span>
+                  {lang === 'es' ? 'Inspeccionar Repositorio & Documentación' : 'Inspect Repository & Documentation'}
+                </span>
+                <span className="text-xs text-zinc-400 group-hover:translate-x-0.5 transition-transform">↗</span>
+              </a>
+            ) : (
+              <a
+                href="#contact"
+                className="w-full py-2.5 px-3 rounded-lg border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/15 text-amber-300 hover:text-white text-xs font-mono font-medium transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 group"
+              >
+                <span>💬</span>
+                <span>
+                  {lang === 'es' ? 'Consultar por Implementación y Alcance' : 'Inquire for Implementation & Scope'}
+                </span>
+                <span className="text-xs text-amber-400 group-hover:translate-x-0.5 transition-transform">→</span>
+              </a>
+            )}
+          </div>
+        ) : (
+          /* ARCHITECTURE LENS CONTENT */
           <SystemTopologyViewer
             systemId={system.id}
             rawTopology={system.topology}
             lang={lang}
           />
+        )}
+      </div>
 
-          <div>
-            <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block mb-2">
-              Full Technology Stack
+      {/* SHARED FULL TECHNOLOGY STACK (Available in both views for perfect balance) */}
+      <div className="pt-4 mt-3 border-t border-white/[0.06]">
+        <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block mb-2">
+          {lang === 'es' ? 'Stack Tecnológico' : 'Full Technology Stack'}
+        </span>
+        <div className="flex flex-wrap gap-1.5">
+          {system.stack.map((s) => (
+            <span
+              key={s}
+              className="px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.08] text-zinc-300 font-mono text-xs hover:border-white/20 transition-colors"
+            >
+              {s}
             </span>
-            <div className="flex flex-wrap gap-1.5">
-              {system.stack.map((s) => (
-                <span
-                  key={s}
-                  className="px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.08] text-zinc-300 font-mono text-xs hover:border-white/20 transition-colors"
-                >
-                  {s}
-                </span>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
-      )}
+      </div>
 
       {/* Actions row: Demo, GitHub, NPM Package, or Request Spec */}
       <div className="pt-5 mt-4 border-t border-white/[0.08] flex flex-wrap items-center gap-3">
@@ -315,48 +454,22 @@ export function SystemsSection() {
   const selectedLiveStats = getStats(selectedSystem.id)
 
   return (
-    <section id="systems" className="py-24 px-5">
+    <section id="systems" className="py-24 px-5 scroll-mt-14">
       <div className="max-w-4xl mx-auto">
         
         {/* Section header */}
-        <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="font-mono text-[11px] text-zinc-500 uppercase tracking-widest block">01</span>
-              {hasAnyLiveSync && (
-                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  LIVE SYNC ACTIVE
-                </span>
-              )}
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{t(lang, 'systems.title')}</h2>
-            <p className="text-sm text-zinc-400 mt-1 max-w-lg">{t(lang, 'systems.subtitle')}</p>
+        <div className="mb-8">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="font-mono text-[11px] text-zinc-500 uppercase tracking-widest block">01</span>
+            {hasAnyLiveSync && (
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                LIVE SYNC ACTIVE
+              </span>
+            )}
           </div>
-
-          {/* Quick toggle at section level too */}
-          <div className="flex items-center p-1 rounded-xl border border-white/[0.08] bg-white/[0.02] self-start sm:self-end">
-            <button
-              onClick={() => setLens('product')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 cursor-pointer ${
-                lens === 'product'
-                  ? 'bg-white text-zinc-950 font-semibold'
-                  : 'text-zinc-400 hover:text-zinc-200'
-              }`}
-            >
-              {t(lang, 'systems.lens_product')}
-            </button>
-            <button
-              onClick={() => setLens('arch')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 cursor-pointer ${
-                lens === 'arch'
-                  ? 'bg-indigo-600 text-white font-semibold'
-                  : 'text-zinc-400 hover:text-zinc-200'
-              }`}
-            >
-              {t(lang, 'systems.lens_arch')}
-            </button>
-          </div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{t(lang, 'systems.title')}</h2>
+          <p className="text-sm text-zinc-400 mt-1 max-w-xl whitespace-pre-line">{t(lang, 'systems.subtitle')}</p>
         </div>
 
         {/* System list */}
@@ -367,7 +480,6 @@ export function SystemsSection() {
               system={s}
               isSelected={s.id === selected}
               onSelect={() => setSelected(s.id)}
-              lens={lens}
               lang={lang}
               liveStats={getStats(s.id)}
             />

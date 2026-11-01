@@ -13,7 +13,7 @@ export function ContactSection() {
   ]
 
   return (
-    <section id="contact" className="py-24 px-5 border-t border-white/[0.04]">
+    <section id="contact" className="py-24 px-5 border-t border-white/[0.04] scroll-mt-14">
       <div className="max-w-4xl mx-auto">
         <div className="mb-10">
           <span className="font-mono text-[11px] text-zinc-500 uppercase tracking-widest block mb-1">04</span>

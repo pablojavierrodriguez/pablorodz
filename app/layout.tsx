@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     template: '%s | Pablo Javier Rodríguez',
   },
   description:
-    'Diseño sistemas donde la intención de negocio, la solidez técnica y los agentes autónomos convergen en software que sobrevive al sprint en que nació. Solutions Architecture, Living Systems Index y frameworks multi-agente.',
+    'Entre la visión del negocio y la realidad del código suele haber un abismo. Mi trabajo es cerrarlo: diseño arquitecturas de software y productos digitales con el pragmatismo que exige la operación y la solidez técnica que demanda el largo plazo.',
   keywords: [
     'Pablo Javier Rodríguez',
     'pablorodz',
@@ -61,13 +61,13 @@ export const metadata: Metadata = {
     siteName: 'Pablo Javier Rodríguez — Portfolio & Living System Index',
     title: 'Pablo Javier Rodríguez — Solutions Architect & Digital Products Builder',
     description:
-      'I design systems where business intent, technical resilience, and autonomous agents converge into software that outlasts the sprint it was born in.',
+      'Between business vision and engineering reality, there is often a gap. My work is closing it: I design software architectures and digital products with the pragmatism operations demand and the technical resilience the long term requires.',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Pablo Javier Rodríguez — Solutions Architect & Digital Products Builder',
     description:
-      'Solutions Architect & Digital Products Builder. Converging business intent, technical resilience, and autonomous agents.',
+      'Solutions Architect & Digital Products Builder. Closing the gap between business vision, product sense, and engineering reality.',
     creator: '@pablitorodz',
     site: '@pablitorodz',
   },

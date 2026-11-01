@@ -9,7 +9,7 @@ export function ChronicleSection() {
   const { lang } = useLanguage()
 
   return (
-    <section id="experience" className="py-24 px-5 border-t border-white/[0.04]">
+    <section id="experience" className="py-24 px-5 border-t border-white/[0.04] scroll-mt-14">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-12 flex flex-col sm:flex-row sm:items-end justify-between gap-4">

@@ -61,8 +61,11 @@ export function Hero() {
         </div>
 
         {/* Thesis — the centerpiece */}
-        <div className="max-w-2xl mx-auto text-center mb-10">
-          <p className="text-base sm:text-lg md:text-xl text-zinc-200 leading-relaxed font-normal">
+        <div className="max-w-3xl mx-auto text-center mb-10 px-2">
+          <p
+            className="text-base sm:text-lg md:text-xl text-zinc-200 leading-relaxed font-normal text-balance"
+            style={{ textWrap: 'balance' }}
+          >
             {thesis[lang]}
           </p>
         </div>

@@ -5,7 +5,7 @@ export const translations = {
     meta: {
       title: 'Pablo Javier Rodríguez — Solutions Architect & Digital Products Builder',
       description:
-        'Diseño sistemas donde la intención de negocio, la solidez técnica y los agentes autónomos convergen en software que sobrevive al sprint en que nació.',
+        'Diseño y construyo soluciones de software y productos digitales que funcionan. Ayudo a startups, empresas y emprendedores a transformar ideas y necesidades de negocio en sistemas sólidos, simples y listos para operar.',
     },
     nav: {
       systems: 'Sistemas',
@@ -15,27 +15,27 @@ export const translations = {
       langLabel: 'EN',
     },
     status: {
-      available: 'Disponible para Advisory',
+      available: 'Disponible para proyectos',
       location: 'Argentina · Remoto Global',
     },
     hero: {
       role: 'Solutions Architect & Digital Products Builder',
       thesis:
-        'Diseño sistemas donde la intención de negocio, la solidez técnica y los agentes autónomos convergen en software que sobrevive al sprint en que nació.',
-      cta_systems: 'Ver mis sistemas',
+        'Diseño y construyo soluciones de software y productos digitales que funcionan. Ayudo a startups, empresas y emprendedores a transformar ideas y necesidades de negocio en sistemas sólidos, simples y listos para operar.',
+      cta_systems: 'Ver sistemas',
       cta_contact: 'Hablemos',
-      badge: 'Solutions Architecture & Digital Products',
+      badge: 'Soluciones · Producto · Arquitectura',
     },
     systems: {
-      title: 'Living System Index',
-      subtitle: 'Sistemas concebidos, diseñados y construidos. Seleccioná uno para inspeccionarlo.',
-      count: '{{n}} sistemas registrados',
-      lens_product: 'Vista de Producto',
-      lens_arch: 'Vista de Arquitectura',
+      title: 'Sistemas & Productos',
+      subtitle: 'Desarrollos propios, herramientas de código abierto y plataformas construidas de punta a punta.\nSeleccioná un proyecto para inspeccionar su propuesta de producto o su arquitectura técnica.',
+      count: '{{n}} desarrollos registrados',
+      lens_product: 'Producto',
+      lens_arch: 'Arquitectura',
       lifecycle: 'Ciclo de vida',
       access: 'Acceso',
       status_label: 'Estado',
-      spec_sheet: 'Ficha Técnica del Sistema',
+      spec_sheet: 'Ficha Técnica',
       topology: 'Topología de Arquitectura',
       request_teaser: 'Solicitar Blueprint Técnico →',
       view_github: 'Ver en GitHub',
@@ -58,13 +58,13 @@ export const translations = {
         'Arquitectura de sistemas, desarrollo web, agentes autónomos y metodologías de liderazgo — la versatilidad y la curiosidad intelectual son ventajas competitivas reales.',
     },
     principles: {
-      title: 'Pilares de Diseño',
-      subtitle: 'Los principios que guían cada decisión técnica y de producto.',
+      title: 'Principios de Ingeniería & Producto',
+      subtitle: 'Criterios técnicos y metodológicos que rigen cada arquitectura y software que construyo.',
     },
     contact: {
       title: '¿Construimos algo juntos?',
       subtitle:
-        'Estoy abierto a advisory, arquitectura de soluciones y proyectos estratégicos donde la profundidad técnica y la visión de negocio sean igual de importantes.',
+        'Estoy abierto a consultoría técnica, arquitectura de soluciones y proyectos estratégicos donde la profundidad de ingeniería y la visión de negocio sean igual de importantes.',
       email_label: 'Email',
       response_time: 'Respondo en 24 hs',
       linkedin_label: 'LinkedIn',
@@ -73,9 +73,9 @@ export const translations = {
       location_detail: 'Argentina (ART, UTC-3). Remote-first, async-friendly.',
       looking_for: 'Conversaciones que me interesan',
       items: [
-        { title: 'Advisory técnico o de producto', desc: 'Arquitectura de sistemas, estrategia de producto, OKRs' },
-        { title: 'Proyectos con impacto real', desc: 'Transformación digital, automatización, IA agentica' },
-        { title: 'Co-fundación o construcción conjunta', desc: 'Si tenés una idea ambiciosa y necesitás quien la arquitecte' },
+        { title: 'Consultoría técnica y de producto', desc: 'Arquitectura de sistemas, estrategia tecnológica y OKRs' },
+        { title: 'Proyectos con impacto real', desc: 'Transformación digital, automatización de operaciones, sistemas distribuidos' },
+        { title: 'Co-fundación o construcción conjunta', desc: 'Si tenés una idea ambiciosa y necesitás quien la lidere y arquitecte' },
       ],
       closing:
         'No busco cualquier proyecto. Busco problemas donde pueda poner lo técnico, lo estratégico y lo humano al mismo tiempo.',
@@ -91,7 +91,7 @@ export const translations = {
     meta: {
       title: 'Pablo Javier Rodríguez — Solutions Architect & Digital Products Builder',
       description:
-        'I design systems where business intent, technical resilience, and autonomous agents converge into software that outlasts the sprint it was born in.',
+        'I design and build software solutions and digital products that work. I help startups, businesses, and founders turn ideas and operational needs into solid, simple, and production-ready systems.',
     },
     nav: {
       systems: 'Systems',
@@ -101,27 +101,27 @@ export const translations = {
       langLabel: 'ES',
     },
     status: {
-      available: 'Open for Advisory',
+      available: 'Available for projects',
       location: 'Argentina · Remote Global',
     },
     hero: {
       role: 'Solutions Architect & Digital Products Builder',
       thesis:
-        'I design systems where business intent, technical resilience, and autonomous agents converge into software that outlasts the sprint it was born in.',
-      cta_systems: 'Explore my systems',
+        'I design and build software solutions and digital products that work. I help startups, businesses, and founders turn ideas and operational needs into solid, simple, and production-ready systems.',
+      cta_systems: 'Explore systems',
       cta_contact: "Let's talk",
-      badge: 'Solutions Architecture & Digital Products',
+      badge: 'Solutions · Product · Architecture',
     },
     systems: {
-      title: 'Living System Index',
-      subtitle: 'Systems conceived, designed, and built. Select one to inspect.',
+      title: 'Systems & Products',
+      subtitle: 'Proprietary software, open-source tools, and enterprise platforms built end-to-end.\nSelect a project to inspect its product overview or technical architecture.',
       count: '{{n}} systems recorded',
-      lens_product: 'Product View',
-      lens_arch: 'Architecture View',
+      lens_product: 'Product',
+      lens_arch: 'Architecture',
       lifecycle: 'Lifecycle',
       access: 'Access',
       status_label: 'Status',
-      spec_sheet: 'System Spec Sheet',
+      spec_sheet: 'Technical Spec Sheet',
       topology: 'Architecture Topology',
       request_teaser: 'Request Architecture Blueprint →',
       view_github: 'View on GitHub',
@@ -144,8 +144,8 @@ export const translations = {
         'Systems architecture, web development, autonomous agents, and leadership methodologies — versatility and intellectual curiosity are real competitive advantages.',
     },
     principles: {
-      title: 'Design Pillars',
-      subtitle: 'The principles that guide every technical and product decision.',
+      title: 'Engineering & Product Principles',
+      subtitle: 'Technical and methodological criteria that govern every architecture and software decision.',
     },
     contact: {
       title: "Let's build something together.",

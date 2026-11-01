@@ -28,8 +28,8 @@ export const profile = {
 
 // ─── THESIS ──────────────────────────────────────────────────────────────────
 export const thesis = {
-  es: 'Diseño sistemas donde la intención de negocio, la solidez técnica y los agentes autónomos convergen en software que sobrevive al sprint en que nació.',
-  en: 'I design systems where business intent, technical resilience, and autonomous agents converge into software that outlasts the sprint it was born in.',
+  es: 'Diseño y construyo soluciones de software y productos digitales que funcionan. Ayudo a startups, empresas y emprendedores a transformar ideas y necesidades de negocio en sistemas sólidos, simples y listos para operar.',
+  en: 'I design and build software solutions and digital products that work. I help startups, businesses, and founders turn ideas and operational needs into solid, simple, and production-ready systems.',
 }
 
 // ─── LIVING SYSTEM INDEX (own projects / repos) ───────────────────────────────
@@ -66,8 +66,8 @@ export const systems: SystemProject[] = [
     index: '01.01',
     name: 'gripm',
     tagline: {
-      es: 'Cockpit ágil y soberano para desarrolladores y agentes de IA.',
-      en: 'Sovereign agile cockpit for developers and AI agents.',
+      es: 'Espacio de trabajo ágil y soberano para desarrolladores y agentes de IA.',
+      en: 'Sovereign agile workspace for developers and AI agents.',
     },
     domain: {
       es: 'AI & Agentic Workflows · Agile Tooling',
@@ -75,7 +75,7 @@ export const systems: SystemProject[] = [
     },
     status: 'production',
     visibility: 'open-source',
-    lifecycle: { es: 'Producción (v1.7.0)', en: 'Production (v1.7.0)' },
+    lifecycle: { es: 'Producción · v1.7.0', en: 'Production · v1.7.0' },
     description: {
       es: 'Workspace local-first para gestionar backlogs de ingeniería y producto, iteraciones y releases directamente en Git. Da a los agentes de IA (Cursor, Claude Code, Antigravity) especificaciones estructuradas y criterios de aceptación verificables sin mover el roadmap a servicios cloud de terceros.',
       en: 'A local-first workspace for managing engineering and product backlogs, iterations, and releases alongside your code in Git. Gives AI agents (Cursor, Claude Code, Antigravity) structured specifications and verifiable acceptance criteria without moving your roadmap to third-party cloud services.',
@@ -111,7 +111,7 @@ export const systems: SystemProject[] = [
     },
     status: 'active-oss',
     visibility: 'open-source',
-    lifecycle: { es: 'Activo (v2.5.0 · OSS)', en: 'Active (v2.5.0 · OSS)' },
+    lifecycle: { es: 'Activo · v2.5.0 · OSS', en: 'Active · v2.5.0 · OSS' },
     description: {
       es: 'Marco de trabajo con roles adaptativos (PM Orchestrator, Principal Engineer, Rigorous QA Auditor, World-class UX Designer) y contratos de handoff verificables para orquestación de subagentes en ciclos de desarrollo acelerados por IA.',
       en: 'An agile framework with adaptive roles (PM Orchestrator, Principal Engineer, Rigorous QA Auditor, World-class UX Designer) and verifiable handoff contracts for orchestrating sub-agents in AI-accelerated development cycles.',
@@ -146,7 +146,7 @@ export const systems: SystemProject[] = [
     },
     status: 'private-teaser',
     visibility: 'private',
-    lifecycle: { es: 'En Producción (Propietario)', en: 'Production (Proprietary)' },
+    lifecycle: { es: 'En producción · Propietario', en: 'In production · Proprietary' },
     description: {
       es: 'Panel de control administrativo integral con analítica en tiempo real, control de acceso basado en roles (RBAC estricto con aislamiento de tenant), automatización de flujos operativos y registro de auditoría de eventos.',
       en: 'Comprehensive administrative control panel with real-time analytics, strict role-based access control (RBAC with tenant isolation), operational workflow automation, and event audit logging.',
@@ -167,7 +167,7 @@ export const systems: SystemProject[] = [
   {
     id: 'dom',
     index: '01.04',
-    name: 'dom-personalfinances',
+    name: 'DOM',
     tagline: {
       es: 'Motor de finanzas personales zero-knowledge con contabilidad de partida doble.',
       en: 'Zero-knowledge personal finance engine with double-entry bookkeeping.',
@@ -178,7 +178,7 @@ export const systems: SystemProject[] = [
     },
     status: 'incubating',
     visibility: 'private-upcoming-oss',
-    lifecycle: { es: 'Incubación · Alfa Privada (OSS próximamente)', en: 'Incubating · Private Alpha (OSS upcoming)' },
+    lifecycle: { es: 'Incubación · Alfa privada', en: 'Incubating · Private alpha' },
     description: {
       es: 'Sistema autónomo de finanzas personales con privacidad absoluta: toda la encriptación ocurre en el cliente (AES-GCM), el servidor nunca ve datos sin cifrar. Motor contable de partida doble con soporte multi-moneda y almacenamiento local-first.',
       en: 'Autonomous personal finance system with absolute privacy: all encryption happens client-side (AES-GCM), the server never sees unencrypted data. Double-entry accounting engine with multi-currency support and local-first storage.',

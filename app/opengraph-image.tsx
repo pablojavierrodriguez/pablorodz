@@ -137,7 +137,7 @@ export default async function Image() {
               maxWidth: '960px',
             }}
           >
-            Diseño sistemas donde la intención de negocio, la solidez técnica y los agentes autónomos convergen en software que sobrevive al sprint en que nació.
+            Entre la visión del negocio y la realidad del código suele haber un abismo. Mi trabajo es cerrarlo con arquitecturas pragmáticas y productos construidos para durar.
           </div>
         </div>
 

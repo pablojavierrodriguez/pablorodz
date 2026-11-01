@@ -5,6 +5,7 @@ import { ChronicleSection } from '@/components/chronicle-section'
 import { PrinciplesSection } from '@/components/principles-section'
 import { ContactSection } from '@/components/contact-section'
 import { Footer } from '@/components/footer'
+import { ScrollToTop } from '@/components/scroll-to-top'
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
         <ContactSection />
       </main>
       <Footer />
+      <ScrollToTop />
     </>
   )
 }
