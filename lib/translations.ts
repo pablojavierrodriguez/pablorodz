@@ -3,7 +3,7 @@ export type Language = 'es' | 'en'
 export const translations = {
   es: {
     meta: {
-      title: 'Pablo Javier Rodríguez — Solutions Architect & Digital Products Builder',
+      title: 'Pablo Javier Rodríguez · Solutions Architect & Digital Products Builder',
       description:
         'Diseño y construyo soluciones de software y productos digitales que funcionan. Ayudo a startups, empresas y emprendedores a transformar ideas y necesidades de negocio en sistemas sólidos, simples y listos para operar.',
     },
@@ -55,11 +55,11 @@ export const translations = {
       certs: 'Certificaciones',
       continuous: 'Aprendizaje continuo',
       continuous_text:
-        'Arquitectura de sistemas, desarrollo web, agentes autónomos y metodologías de liderazgo — la versatilidad y la curiosidad intelectual son ventajas competitivas reales.',
+        'Arquitectura de sistemas, desarrollo web, agentes autónomos y metodologías de liderazgo: la versatilidad y la curiosidad intelectual son ventajas competitivas reales.',
     },
     principles: {
       title: 'Principios de Ingeniería & Producto',
-      subtitle: 'Criterios técnicos y metodológicos que rigen cada arquitectura y software que construyo.',
+      subtitle: 'Recomendaciones técnicas y propuestas de producto orientadas a construir soluciones con impacto y valor real.',
     },
     contact: {
       title: '¿Construimos algo juntos?',
@@ -89,7 +89,7 @@ export const translations = {
   },
   en: {
     meta: {
-      title: 'Pablo Javier Rodríguez — Solutions Architect & Digital Products Builder',
+      title: 'Pablo Javier Rodríguez · Solutions Architect & Digital Products Builder',
       description:
         'I design and build software solutions and digital products that work. I help startups, businesses, and founders turn ideas and operational needs into solid, simple, and production-ready systems.',
     },
@@ -141,11 +141,11 @@ export const translations = {
       certs: 'Certifications',
       continuous: 'Continuous learning',
       continuous_text:
-        'Systems architecture, web development, autonomous agents, and leadership methodologies — versatility and intellectual curiosity are real competitive advantages.',
+        'Systems architecture, web development, autonomous agents, and leadership methodologies: versatility and intellectual curiosity are real competitive advantages.',
     },
     principles: {
       title: 'Engineering & Product Principles',
-      subtitle: 'Technical and methodological criteria that govern every architecture and software decision.',
+      subtitle: 'Technical recommendations and product proposals focused on building impactful, value-driven solutions.',
     },
     contact: {
       title: "Let's build something together.",

@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://pablorodz.com'),
   title: {
-    default: 'Pablo Javier Rodríguez — Solutions Architect & Digital Products Builder',
+    default: 'Pablo Javier Rodríguez · Solutions Architect & Digital Products Builder',
     template: '%s | Pablo Javier Rodríguez',
   },
   description:
@@ -59,14 +59,14 @@ export const metadata: Metadata = {
     locale: 'es_AR',
     alternateLocale: ['en_US'],
     url: 'https://pablorodz.com',
-    siteName: 'Pablo Javier Rodríguez — Portfolio & Living System Index',
-    title: 'Pablo Javier Rodríguez — Solutions Architect & Digital Products Builder',
+    siteName: 'Pablo Javier Rodríguez · Portfolio & Living System Index',
+    title: 'Pablo Javier Rodríguez · Solutions Architect & Digital Products Builder',
     description:
       'Between business vision and engineering reality, there is often a gap. My work is closing it: I design software architectures and digital products with the pragmatism operations demand and the technical resilience the long term requires.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Pablo Javier Rodríguez — Solutions Architect & Digital Products Builder',
+    title: 'Pablo Javier Rodríguez · Solutions Architect & Digital Products Builder',
     description:
       'Solutions Architect & Digital Products Builder. Closing the gap between business vision, product sense, and engineering reality.',
     creator: '@pablitorodz',
@@ -101,7 +101,7 @@ const jsonLd = {
       '@type': 'WebSite',
       '@id': 'https://pablorodz.com/#website',
       url: 'https://pablorodz.com',
-      name: 'Pablo Javier Rodríguez — Portfolio & Architecture Chronicle',
+      name: 'Pablo Javier Rodríguez · Portfolio & Architecture Chronicle',
       description:
         'Portfolio profesional y living systems index de Pablo Javier Rodríguez, Solutions Architect y Digital Products Builder.',
       publisher: {
@@ -163,7 +163,7 @@ const jsonLd = {
       '@type': 'ProfilePage',
       '@id': 'https://pablorodz.com/#profilepage',
       url: 'https://pablorodz.com',
-      name: 'Pablo Javier Rodríguez — Profile',
+      name: 'Pablo Javier Rodríguez · Profile',
       isPartOf: {
         '@id': 'https://pablorodz.com/#website',
       },

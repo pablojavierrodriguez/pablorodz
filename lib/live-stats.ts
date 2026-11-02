@@ -1,5 +1,5 @@
 /**
- * lib/live-stats.ts — The "Living" System Engine.
+ * lib/live-stats.ts: The "Living" System Engine.
  * Fetches public metadata from GitHub and NPM registries with caching and graceful fallbacks.
  */
 

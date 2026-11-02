@@ -1,5 +1,5 @@
 /**
- * content.ts — Single source of truth for all professional data.
+ * content.ts: Single source of truth for all professional data.
  * UI components import from here; translations.ts handles display strings.
  */
 
@@ -160,8 +160,8 @@ export const systems: SystemProject[] = [
       en: 'A platform to centralize business operations without sacrificing control or visibility. Every action is logged, every role is strictly scoped, and workflows are automated without extra code.',
     },
     archView: {
-      es: 'Modelo de multi-tenancy basado en esquemas de PostgreSQL con middleware de aislamiento en el edge. Control de acceso con RBAC granular a nivel de recurso. Log de auditoría implementado como event stream inmutable con webhooks de salida. Sin ORM — queries con tipado estricto para operaciones críticas.',
-      en: 'Multi-tenancy model based on PostgreSQL schemas with edge-layer isolation middleware. Granular resource-level RBAC. Audit log implemented as an immutable event stream with outbound webhooks. No ORM — strictly typed queries for critical operations.',
+      es: 'Modelo de multi-tenancy basado en esquemas de PostgreSQL con middleware de aislamiento en el edge. Control de acceso con RBAC granular a nivel de recurso. Log de auditoría implementado como event stream inmutable con webhooks de salida. Sin ORM, queries con tipado estricto para operaciones críticas.',
+      en: 'Multi-tenancy model based on PostgreSQL schemas with edge-layer isolation middleware. Granular resource-level RBAC. Audit log implemented as an immutable event stream with outbound webhooks. No ORM, strictly typed queries for critical operations.',
     },
   },
   {
@@ -206,20 +206,20 @@ export interface EnterpriseCase {
   role: { es: string; en: string }
   company: string
   description: { es: string; en: string }
-  outcomes: string[]           // Metrics — language-neutral (numbers stay same)
+  outcomes: string[]           // Metrics: language-neutral (numbers stay same)
   tags: string[]
 }
 
 export const enterpriseCases: EnterpriseCase[] = [
   {
     id: 'netops-migration',
-    title: { es: 'Migración NetOps', en: 'NetOps Migration' },
+    title: { es: 'Migración NetOps & Ticketing OSS', en: 'NetOps & OSS Ticketing Migration' },
     period: '2025',
-    role: { es: 'Technical Product Owner', en: 'Technical Product Owner' },
+    role: { es: 'Project Lead & Product Owner', en: 'Project Lead & Product Owner' },
     company: 'Personal (Telecom)',
     description: {
-      es: 'Lideré end-to-end la migración del sistema de tickets OSS a BMC Helix ITSM + NetOps para 3500+ usuarios de operaciones críticas de red.',
-      en: 'Led end-to-end migration of the OSS ticketing system to BMC Helix ITSM + NetOps for 3,500+ critical network operations users.',
+      es: 'Lideré end-to-end el proyecto de migración del sistema de tickets OSS (ITSM, BMC Helix + NetOps) para 3,500+ usuarios y 130,000+ incidentes mensuales.',
+      en: 'Led end-to-end the migration project of the OSS ticketing system (ITSM, BMC Helix + NetOps) for 3,500+ users and 130,000+ monthly incidents.',
     },
     outcomes: [
       '130,000+ incidentes gestionados por mes en el nuevo sistema',
@@ -231,7 +231,7 @@ export const enterpriseCases: EnterpriseCase[] = [
   {
     id: 'digital-noc',
     title: { es: 'Digital NOC Initiative', en: 'Digital NOC Initiative' },
-    period: '2024 — Presente',
+    period: '2024 - Presente',
     role: { es: 'Technical Product Owner', en: 'Technical Product Owner' },
     company: 'Personal (Telecom)',
     description: {
@@ -247,8 +247,8 @@ export const enterpriseCases: EnterpriseCase[] = [
   },
   {
     id: 'cross-oss',
-    title: { es: 'Convergencia OSS — Proyecto CROSS', en: 'OSS Convergence — CROSS Project' },
-    period: '2019 — 2021',
+    title: { es: 'Convergencia OSS: Proyecto CROSS', en: 'OSS Convergence: CROSS Project' },
+    period: '2019 - 2021',
     role: { es: 'Sr. Analista de Mejora Continua', en: 'Sr. Continuous Improvement Analyst' },
     company: 'Telecom Argentina',
     description: {
@@ -294,12 +294,12 @@ export const roles: Role[] = [
   {
     title: { es: 'Arquitecto de Soluciones', en: 'Solutions Architect' },
     company: 'Personal',
-    period: { es: 'Jun 2026 – Presente', en: 'Jun 2026 – Present' },
+    period: { es: 'Jun 2026 - Presente', en: 'Jun 2026 - Present' },
     isCurrent: true,
     highlights: [
       {
-        es: 'Definición de arquitecturas de solución dentro del dominio OSS (ITSM/SoR, órdenes, digitalización de workflows), transformando necesidades de negocio y operación en soluciones escalables.',
-        en: 'Defining solution architectures across the OSS domain (ITSM/SoR, ordering, workflow digitization), transforming business and operational needs into scalable architectures.',
+        es: 'Definición de arquitecturas de solución para el dominio OSS, Inventario y Assurance, con foco en Tickets, Órdenes y Workflows, transformando necesidades de negocio en soluciones escalables.',
+        en: 'Defining solution architectures across the OSS, Inventory, and Assurance domain, focused on Tickets, Orders, and Workflows, transforming business needs into scalable solutions.',
       },
       {
         es: 'Referente arquitectónico del dominio: definición de responsabilidades de sistemas, contratos de integración y límites funcionales entre aplicaciones y plataformas.',
@@ -312,9 +312,9 @@ export const roles: Role[] = [
     ],
   },
   {
-    title: { es: 'Technical Product Owner — OSS Core', en: 'Technical Product Owner — OSS Core' },
+    title: { es: 'Technical Product Owner: OSS Core', en: 'Technical Product Owner: OSS Core' },
     company: 'Personal',
-    period: { es: 'Dic 2025 – Jun 2026', en: 'Dec 2025 – Jun 2026' },
+    period: { es: 'Dic 2025 - Jun 2026', en: 'Dec 2025 - Jun 2026' },
     isCurrent: false,
     highlights: [
       {
@@ -334,7 +334,7 @@ export const roles: Role[] = [
   {
     title: { es: 'Sr. Business Analyst & Product Owner', en: 'Sr. Business Analyst & Product Owner' },
     company: 'Telecom Argentina',
-    period: { es: 'Feb 2022 – Dic 2025', en: 'Feb 2022 – Dec 2025' },
+    period: { es: 'Feb 2022 - Dic 2025', en: 'Feb 2022 - Dec 2025' },
     isCurrent: false,
     highlights: [
       {
@@ -354,7 +354,7 @@ export const roles: Role[] = [
   {
     title: { es: 'Analista Sr. de Procesos y Mejora Continua', en: 'Sr. Continuous Improvement & Process Analyst' },
     company: 'Telecom Argentina',
-    period: { es: 'Jun 2019 – Feb 2022', en: 'Jun 2019 – Feb 2022' },
+    period: { es: 'Jun 2019 - Feb 2022', en: 'Jun 2019 - Feb 2022' },
     isCurrent: false,
     highlights: [
       {
@@ -370,7 +370,7 @@ export const roles: Role[] = [
   {
     title: { es: 'Co-fundador', en: 'Co-founder' },
     company: 'Mediavint',
-    period: { es: 'Abr 2020 – Abr 2021', en: 'Apr 2020 – Apr 2021' },
+    period: { es: 'Abr 2020 - Abr 2021', en: 'Apr 2020 - Apr 2021' },
     isCurrent: false,
     highlights: [
       {
@@ -385,66 +385,117 @@ export const roles: Role[] = [
 export const education = {
   degrees: [
     {
-      degree: { es: 'Licenciatura en Publicidad, Comunicación y Marketing', en: 'Bachelor\'s — Advertising, Communication & Marketing' },
+      degree: { es: 'Licenciatura en Publicidad, Comunicación y Marketing', en: 'Bachelor\'s in Advertising, Communication & Marketing' },
       institution: 'Universidad Nacional de Lomas de Zamora (UNLZ)',
-      period: '2008 — 2015',
+      period: '2015',
       status: { es: 'Completado', en: 'Completed' },
     },
     {
       degree: { es: 'Ingeniería en Sistemas de Información', en: 'Systems Engineering' },
       institution: 'Universidad Tecnológica Nacional (UTN)',
-      period: '2016 — 2017',
+      period: '2017',
       status: { es: 'En Pausa', en: 'On Hold' },
     },
   ],
   certifications: [
-    'Introduction to Model Context Protocol (MCP) — Anthropic',
+    'Introduction to Model Context Protocol (MCP) · Anthropic',
     'Atlassian Agile Project Management Professional Certificate',
-    'Product Management Basics Certification — Pendo.io',
-    'Product Manager Certification — Coderhouse',
-    'Data Analytics Certification — Coderhouse',
-    'ITIL® Foundation & PPO — Xelere',
+    'Product Management Basics Certification · Pendo.io',
+    'Product Manager Certification · Coderhouse',
+    'Data Analytics Certification · Coderhouse',
+    'ITIL® Foundation & PPO · Xelere',
     'LeSS (Large-Scale Scrum) Practitioner',
-    'Tableau & Excel Data Processing — Coderhouse',
+    'Tableau & Excel Data Processing · Coderhouse',
   ],
 }
 
 // ─── DESIGN PILLARS (Universal & Agnostic) ───────────────────────────────────
-export const principles = [
+export interface DesignPillar {
+  id: string
+  number: string
+  title: { es: string; en: string }
+  body: { es: string; en: string }
+  productProposal: { es: string; en: string }
+  archRecommendation: { es: string; en: string }
+  relatedAdrId: string
+  relatedLabel: { es: string; en: string }
+}
+
+export const principles: DesignPillar[] = [
   {
     id: 'data-autonomy',
     number: '01',
-    title: { es: 'Autonomía e Interoperabilidad', en: 'Data Autonomy & Open Interfaces' },
+    title: { es: 'Interoperabilidad y Estándares Abiertos', en: 'Open Standards & Interoperability' },
     body: {
-      es: 'Los sistemas deben diseñarse minimizando acoplamientos forzados con plataformas propietarias. Desacoplar capacidades mediante estándares abiertos e interfaces limpias garantiza que el valor y los datos pertenezcan al producto, no al proveedor de turno.',
-      en: 'Systems should be designed minimizing forced vendor lock-in. Decoupling capabilities through open standards and clean interfaces ensures that data and logic belong to the product, not the hosting vendor.',
+      es: 'Priorizamos interfaces limpias y estándares abiertos para evitar dependencias innecesarias. Desacoplar las piezas clave permite que el producto evolucione con libertad y que los datos sigan bajo control del negocio.',
+      en: 'We prioritize clean interfaces and open standards to avoid unnecessary lock-in. Decoupling core capabilities allows the product to evolve freely while keeping data under business control.',
     },
+    productProposal: {
+      es: 'Evitar costos cautivos y asegurar que la información del usuario sea siempre portable y accesible.',
+      en: 'Avoid captive vendor costs and ensure user data remains portable and accessible at all times.',
+    },
+    archRecommendation: {
+      es: 'Definir adaptadores e interfaces basadas en formatos estándar (Markdown, SQLite, OpenAPI) antes de acoplar proveedores.',
+      en: 'Define adapters and open-format interfaces (Markdown, SQLite, OpenAPI) before coupling to specific vendors.',
+    },
+    relatedAdrId: 'local-first-ai',
+    relatedLabel: { es: 'Relacionado: ADR-003 (Local-First)', en: 'Related: ADR-003 (Local-First)' },
   },
   {
     id: 'dual-layer-protocols',
     number: '02',
-    title: { es: 'Interfases para Humanos y Máquinas', en: 'Human & Machine Protocol Design' },
+    title: { es: 'Diseño para Personas y Agentes', en: 'Design for Humans & Agents' },
     body: {
-      es: 'El software moderno no solo es consumido por personas en una interfaz gráfica; es operado por agentes de IA, procesos asíncronos y scripts. Diseñar contratos y protocolos limpios (APIs tipadas, JSON-RPC, MCP, CLI) es un requisito desde el día cero.',
-      en: 'Modern software is not just operated by humans through a GUI; it is driven by AI agents, headless pipelines, and scripts. Designing clean contracts and open protocols (typed APIs, JSON-RPC, MCP, CLI) is a day-zero requirement.',
+      es: 'Hoy los productos no solo se usan desde una pantalla; también interactúan con agentes de IA y automatizaciones. Proponemos construir experiencias claras para las personas apoyadas en contratos bien definidos (APIs, CLI, MCP).',
+      en: 'Modern products are not just used through screens; they also interact with AI agents and automations. We propose building clear human experiences backed by well-defined contracts (APIs, CLI, MCP).',
     },
+    productProposal: {
+      es: 'Multiplicar el valor del producto permitiendo que el usuario opere tanto desde la interfaz visual como desde su asistente de IA.',
+      en: 'Multiply product value by letting users work seamlessly from both the visual UI and their AI assistants.',
+    },
+    archRecommendation: {
+      es: 'Exponer la misma lógica de dominio mediante contratos tipados (JSON-RPC, MCP, REST) consumibles por humanos y máquinas.',
+      en: 'Expose core domain logic through typed contracts (JSON-RPC, MCP, REST) consumable by both humans and machines.',
+    },
+    relatedAdrId: 'local-first-ai',
+    relatedLabel: { es: 'Aplicado en: gripm & gripm-playbook', en: 'Applied in: gripm & gripm-playbook' },
   },
   {
     id: 'resilient-simplicity',
     number: '03',
-    title: { es: 'Simplicidad Resiliente', en: 'Resilient Simplicity' },
+    title: { es: 'Simplicidad con Propósito', en: 'Purposeful Simplicity' },
     body: {
-      es: 'La verdadera sofisticación arquitectónica consiste en saber qué NO construir. La complejidad gratuita cobra peaje en velocidad de entrega y fragilidad operativa. Diseñar con modularidad pragmática hoy para poder evolucionar sin reescribir mañana.',
-      en: 'True architectural sophistication is knowing what NOT to build. Gratuitous complexity exacts a heavy toll on delivery velocity and operational stability. Design with pragmatic modularity today to evolve without rewrites tomorrow.',
+      es: 'El mejor diseño suele ser el más simple que resuelve el problema con solidez. Evitar complejidad innecesaria acelera la entrega de valor hoy y facilita la evolución del sistema mañana.',
+      en: 'The best design is often the simplest one that reliably solves the problem. Avoiding unnecessary complexity accelerates value delivery today and makes system evolution easier tomorrow.',
     },
+    productProposal: {
+      es: 'Concentrar el esfuerzo en resolver el problema real del usuario y validar impacto antes de escalar la inversión.',
+      en: 'Focus effort on solving the real user problem and validating impact before scaling investment.',
+    },
+    archRecommendation: {
+      es: 'Empezar con una arquitectura modular simple y extraer servicios distribuidos solo cuando la demanda real lo justifique.',
+      en: 'Start with a clean modular architecture and extract distributed services only when real demand justifies it.',
+    },
+    relatedAdrId: 'startup-01',
+    relatedLabel: { es: 'Relacionado: ADR-001 (Fase 0→1)', en: 'Related: ADR-001 (0→1 Phase)' },
   },
   {
     id: 'systems-thinking',
     number: '04',
-    title: { es: 'Integridad de Sistemas de Punta a Punta', en: 'End-to-End System Integrity' },
+    title: { es: 'Alineación entre Negocio, UX y Operación', en: 'Business, UX & Operations Alignment' },
     body: {
-      es: 'Las fallas críticas de producto rara vez ocurren en un componente aislado; ocurren en la fricción entre interfaces: negocio, datos, UX y operaciones. La arquitectura debe gobernar el flujo completo para que el impacto sea real y medible.',
-      en: 'Critical product failures rarely happen inside an isolated component; they occur at the seams between business intent, data flow, UX, and operations. Architecture must govern the entire lifecycle to produce measurable impact.',
+      es: 'Los mayores desafíos rara vez están en un componente aislado, sino en cómo se conectan el negocio, la experiencia de uso y la operación diaria. Acompañar el flujo de punta a punta ayuda a que las soluciones generen impacto medible.',
+      en: 'The biggest challenges rarely live in an isolated component, but in how business, UX, and daily operations connect. Supporting the end-to-end flow helps solutions deliver measurable impact.',
     },
+    productProposal: {
+      es: 'Diseñar flujos pensados para las personas que operan el sistema todos los días, reduciendo fricción y tiempos de respuesta.',
+      en: 'Design workflows around the people operating the system daily, reducing friction and response times.',
+    },
+    archRecommendation: {
+      es: 'Asegurar trazabilidad, manejo de errores claro y desacoplamiento asíncrono en las integraciones críticas.',
+      en: 'Ensure observability, clear error recovery, and async decoupling across mission-critical integrations.',
+    },
+    relatedAdrId: 'enterprise-noc',
+    relatedLabel: { es: 'Relacionado: ADR-002 (Operación Crítica)', en: 'Related: ADR-002 (Critical Ops)' },
   },
 ]

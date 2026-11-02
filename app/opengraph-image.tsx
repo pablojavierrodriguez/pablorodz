@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og'
 
-export const alt = 'Pablo Javier Rodríguez — Solutions Architect & Digital Products Builder'
+export const alt = 'Pablo Javier Rodríguez · Solutions Architect & Digital Products Builder'
 export const size = {
   width: 1200,
   height: 630,
