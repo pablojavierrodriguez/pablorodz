@@ -134,7 +134,15 @@ export function Navigation() {
           <button
             type="button"
             onClick={() => setMobileMenuOpen((prev) => !prev)}
-            aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+            aria-label={
+              lang === 'es'
+                ? mobileMenuOpen
+                  ? 'Cerrar menú'
+                  : 'Abrir menú'
+                : mobileMenuOpen
+                  ? 'Close menu'
+                  : 'Open menu'
+            }
             className="md:hidden p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/[0.06] transition-colors cursor-pointer"
           >
             {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}

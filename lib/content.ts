@@ -3,10 +3,24 @@
  * UI components import from here; translations.ts handles display strings.
  */
 
+// ─── SITE URL HELPER ─────────────────────────────────────────────────────────
+export function getSiteUrl(): string {
+  if (process.env.NEXT_PUBLIC_SITE_URL) {
+    return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, '')
+  }
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`
+  }
+  return 'https://pablorodz.vercel.app'
+}
+
 // ─── PROFILE ─────────────────────────────────────────────────────────────────
 export const profile = {
   name: 'Pablo Javier Rodríguez',
-  handle: 'pablorodz',          // placeholder until domain/handle is decided
+  handle: 'pablorodz',
   role: {
     es: 'Arquitecto de Soluciones y Creador de Productos Digitales',
     en: 'Solutions Architect & Digital Products Builder',
@@ -17,7 +31,7 @@ export const profile = {
     remote: true,
   },
   email: 'pabjrodriguez@gmail.com',
-  avatar: 'https://avatars.githubusercontent.com/u/36267403?v=4', // GitHub avatar as placeholder
+  avatar: 'https://avatars.githubusercontent.com/u/36267403?v=4',
   links: {
     github: 'https://github.com/pablojavierrodriguez',
     linkedin: 'https://linkedin.com/in/pablojavierrodriguez',
@@ -206,7 +220,7 @@ export interface EnterpriseCase {
   role: { es: string; en: string }
   company: string
   description: { es: string; en: string }
-  outcomes: string[]           // Metrics: language-neutral (numbers stay same)
+  outcomes: { es: string; en: string }[]
   tags: string[]
 }
 
@@ -222,9 +236,18 @@ export const enterpriseCases: EnterpriseCase[] = [
       en: 'Led end-to-end the migration project of the OSS ticketing system (ITSM, BMC Helix + NetOps) for 3,500+ users and 130,000+ monthly incidents.',
     },
     outcomes: [
-      '130,000+ incidentes gestionados por mes en el nuevo sistema',
-      'Implementado en tiempo récord con alta tasa de adopción',
-      'Sin interrupción de operaciones críticas durante la migración',
+      {
+        es: '130,000+ incidentes gestionados por mes en el nuevo sistema',
+        en: '130,000+ monthly incidents managed in the new platform',
+      },
+      {
+        es: 'Implementado en tiempo récord con alta tasa de adopción',
+        en: 'Delivered in record time with high organizational adoption',
+      },
+      {
+        es: 'Sin interrupción de operaciones críticas durante la migración',
+        en: 'Zero disruption to mission-critical operations during migration',
+      },
     ],
     tags: ['ITSM', 'Enterprise Migration', 'Change Management', 'OSS'],
   },
@@ -239,9 +262,18 @@ export const enterpriseCases: EnterpriseCase[] = [
       en: 'Architected and implemented automation of manual network incident management processes, reducing dependency on human intervention for repeatable operations.',
     },
     outcomes: [
-      '+30% de automatización de procesos → MTTR -25%',
-      '-20% de FTE necesarios en operaciones de assurance',
-      'Reducción medible de MTTD y mejora de NPS de operaciones',
+      {
+        es: '+30% de automatización de procesos → MTTR -25%',
+        en: '+30% process automation → -25% MTTR reduction',
+      },
+      {
+        es: '-20% de FTE necesarios en operaciones de assurance',
+        en: '-20% manual FTE effort required in assurance operations',
+      },
+      {
+        es: 'Reducción medible de MTTD y mejora de NPS de operaciones',
+        en: 'Measurable MTTD reduction and improved operations NPS',
+      },
     ],
     tags: ['Automation', 'AI/ML Integration', 'Operational Excellence', 'NOC'],
   },
@@ -256,9 +288,18 @@ export const enterpriseCases: EnterpriseCase[] = [
       en: 'Led the unification of the ticketing system post-merger Telecom + Cablevisión. A single incident/problem/change management system for the entire converged operation.',
     },
     outcomes: [
-      '+30% de eficiencia en procesos cross-empresa',
-      'Implementado en CTO y operaciones regionales sin disrupciones',
-      '3,500+ usuarios migrados a sistema unificado',
+      {
+        es: '+30% de eficiencia en procesos cross-empresa',
+        en: '+30% efficiency across cross-company operational processes',
+      },
+      {
+        es: 'Implementado en CTO y operaciones regionales sin disrupciones',
+        en: 'Rolled out across CTO and regional operations with zero disruption',
+      },
+      {
+        es: '3,500+ usuarios migrados a sistema unificado',
+        en: '3,500+ users migrated to a single unified platform',
+      },
     ],
     tags: ['Enterprise Integration', 'Post-Merger', 'Process Design', 'ITSM'],
   },
@@ -273,9 +314,18 @@ export const enterpriseCases: EnterpriseCase[] = [
       en: 'Led the redesign of the main OSS product improving user experience and operational indicators. Full-team agile transformation implemented in parallel.',
     },
     outcomes: [
-      'KPI de usabilidad clave +25%',
-      'Velocidad de sprints del equipo +30% de eficiencia',
-      'Transformación agile completa del equipo de producto',
+      {
+        es: 'KPI de usabilidad clave +25%',
+        en: '+25% improvement in core usability KPI',
+      },
+      {
+        es: 'Velocidad de sprints del equipo +30% de eficiencia',
+        en: '+30% sprint delivery efficiency across the product team',
+      },
+      {
+        es: 'Transformación agile completa del equipo de producto',
+        en: 'End-to-end agile transformation of the product organization',
+      },
     ],
     tags: ['UX Research', 'Product Design', 'User Advocacy', 'Agile Transformation'],
   },

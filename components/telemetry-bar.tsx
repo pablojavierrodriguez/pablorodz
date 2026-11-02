@@ -188,7 +188,7 @@ export function TelemetryBar() {
             <div className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
               <span className="text-xs font-mono font-bold text-white tracking-tight">
-                pablorodz.com
+                /{profile.handle}
               </span>
               <span className="text-[10px] font-mono text-zinc-500">
                 · {lang === 'es' ? 'Ficha Técnica' : 'Site Specs'}
@@ -208,12 +208,12 @@ export function TelemetryBar() {
           <div className="py-3 space-y-2 text-xs font-mono">
             <div className="flex items-center justify-between py-1 border-b border-white/[0.04]">
               <span className="text-zinc-500">Framework</span>
-              <span className="text-zinc-200 font-medium">Next.js 16 · React 19</span>
+              <span className="text-zinc-200 font-medium">Next.js 16.4 · React 19.3</span>
             </div>
 
             <div className="flex items-center justify-between py-1 border-b border-white/[0.04]">
-              <span className="text-zinc-500">Tipado</span>
-              <span className="text-zinc-200 font-medium">TypeScript 5.7 (Strict)</span>
+              <span className="text-zinc-500">{lang === 'es' ? 'Tipado' : 'Typing'}</span>
+              <span className="text-zinc-200 font-medium">TypeScript 5 (Strict)</span>
             </div>
 
             <div className="flex items-center justify-between py-1 border-b border-white/[0.04]">
@@ -222,13 +222,15 @@ export function TelemetryBar() {
             </div>
 
             <div className="flex items-center justify-between py-1 border-b border-white/[0.04]">
-              <span className="text-zinc-500">Privacidad</span>
+              <span className="text-zinc-500">{lang === 'es' ? 'Privacidad' : 'Privacy'}</span>
               <span className="text-emerald-400 font-medium">100% Local-first · 0 Trackers</span>
             </div>
 
             <div className="flex items-center justify-between py-1 border-b border-white/[0.04]">
-              <span className="text-zinc-500">SLA Contacto</span>
-              <span className="text-cyan-300 font-medium">&lt; 24hs · Canal Directo</span>
+              <span className="text-zinc-500">{lang === 'es' ? 'SLA Contacto' : 'Contact SLA'}</span>
+              <span className="text-cyan-300 font-medium">
+                {lang === 'es' ? '< 24hs · Canal Directo' : '< 24h · Direct Channel'}
+              </span>
             </div>
 
             <div className="flex items-center justify-between py-1">

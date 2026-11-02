@@ -1,6 +1,9 @@
 import type { MetadataRoute } from 'next'
+import { getSiteUrl } from '@/lib/content'
 
 export default function robots(): MetadataRoute.Robots {
+  const siteUrl = getSiteUrl()
+
   return {
     rules: [
       {
@@ -8,6 +11,6 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
       },
     ],
-    sitemap: 'https://pablorodz.com/sitemap.xml',
+    sitemap: `${siteUrl}/sitemap.xml`,
   }
 }

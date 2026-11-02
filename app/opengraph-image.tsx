@@ -1,6 +1,7 @@
 import { ImageResponse } from 'next/og'
+import { profile, thesis } from '@/lib/content'
 
-export const alt = 'Pablo Javier Rodríguez · Solutions Architect & Digital Products Builder'
+export const alt = `${profile.name} · ${profile.role.en}`
 export const size = {
   width: 1200,
   height: 630,
@@ -19,7 +20,7 @@ export default async function Image() {
           justifyContent: 'space-between',
           backgroundColor: '#0d0f14',
           backgroundImage:
-            'radial-gradient(circle at 85% 15%, rgba(16, 185, 129, 0.14) 0%, transparent 45%), radial-gradient(circle at 15% 85%, rgba(59, 130, 246, 0.08) 0%, transparent 45%)',
+            'radial-gradient(circle at 85% 15%, rgba(16, 185, 129, 0.14) 0%, transparent 45%), radial-gradient(circle at 15% 85%, rgba(99, 102, 241, 0.1) 0%, transparent 45%)',
           padding: '56px 64px',
           boxSizing: 'border-box',
           border: '1px solid rgba(255, 255, 255, 0.08)',
@@ -61,31 +62,32 @@ export default async function Image() {
               style={{
                 fontSize: 13,
                 fontWeight: 700,
-                letterSpacing: '0.12em',
+                letterSpacing: '0.1em',
                 color: '#34d399',
                 textTransform: 'uppercase',
               }}
             >
-              Living System Index · Solutions Architecture
+              Sistemas · Producto · Arquitectura
             </span>
           </div>
 
-          {/* Monogram / Domain Badge */}
+          {/* Monogram / Handle Badge */}
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
               backgroundColor: 'rgba(255, 255, 255, 0.03)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '8px',
-              padding: '6px 14px',
-              color: '#a1a1aa',
-              fontSize: 14,
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: '10px',
+              padding: '6px 16px',
+              color: '#f4f4f5',
+              fontSize: 16,
+              fontWeight: 700,
               fontFamily: 'monospace',
             }}
           >
-            <span style={{ color: '#10b981', marginRight: '6px', fontWeight: 700 }}>❯</span>
-            <span>pablorodz.com</span>
+            <span style={{ color: '#10b981', marginRight: '2px' }}>/</span>
+            <span>{profile.handle}</span>
           </div>
         </div>
 
@@ -102,42 +104,42 @@ export default async function Image() {
           <div
             style={{
               display: 'flex',
-              fontSize: 54,
+              fontSize: 56,
               fontWeight: 800,
-              lineHeight: 1.1,
-              letterSpacing: '-0.025em',
+              lineHeight: 1.08,
+              letterSpacing: '-0.03em',
               color: '#ffffff',
-              marginBottom: '10px',
+              marginBottom: '12px',
             }}
           >
-            Pablo Javier Rodríguez
+            {profile.name}
           </div>
 
           {/* Subtitle / Role */}
           <div
             style={{
               display: 'flex',
-              fontSize: 25,
+              fontSize: 24,
               fontWeight: 600,
               color: '#34d399',
               letterSpacing: '-0.01em',
-              marginBottom: '16px',
+              marginBottom: '18px',
             }}
           >
-            Solutions Architect &amp; Digital Products Builder
+            {profile.role.es}
           </div>
 
-          {/* Core Thesis */}
+          {/* Core Thesis (synchronized with lib/content.ts) */}
           <div
             style={{
               display: 'flex',
-              fontSize: 17,
-              lineHeight: 1.5,
-              color: '#94a3b8',
-              maxWidth: '960px',
+              fontSize: 18,
+              lineHeight: 1.55,
+              color: '#a1a1aa',
+              maxWidth: '980px',
             }}
           >
-            Entre la visión del negocio y la realidad del código suele haber un abismo. Mi trabajo es cerrarlo con arquitecturas pragmáticas y productos construidos para durar.
+            {thesis.es}
           </div>
         </div>
 
@@ -156,7 +158,7 @@ export default async function Image() {
               flexDirection: 'column',
               width: '235px',
               backgroundColor: 'rgba(255, 255, 255, 0.025)',
-              border: '1px solid rgba(255, 255, 255, 0.07)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
               borderRadius: '12px',
               padding: '14px 18px',
             }}
@@ -164,8 +166,8 @@ export default async function Image() {
             <span style={{ fontSize: 22, fontWeight: 700, color: '#f4f4f5', marginBottom: '4px' }}>
               3,500+
             </span>
-            <span style={{ fontSize: 12, color: '#71717a', lineHeight: 1.3 }}>
-              Usuarios Operaciones Críticas (OSS)
+            <span style={{ fontSize: 12, color: '#a1a1aa', lineHeight: 1.3 }}>
+              Usuarios en Sistemas Críticos OSS
             </span>
           </div>
 
@@ -175,17 +177,17 @@ export default async function Image() {
               display: 'flex',
               flexDirection: 'column',
               width: '235px',
-              backgroundColor: 'rgba(16, 185, 129, 0.04)',
-              border: '1px solid rgba(16, 185, 129, 0.16)',
+              backgroundColor: 'rgba(16, 185, 129, 0.05)',
+              border: '1px solid rgba(16, 185, 129, 0.2)',
               borderRadius: '12px',
               padding: '14px 18px',
             }}
           >
             <span style={{ fontSize: 22, fontWeight: 700, color: '#34d399', marginBottom: '4px' }}>
-              -25% MTTR
+              130k+ / mes
             </span>
-            <span style={{ fontSize: 12, color: '#71717a', lineHeight: 1.3 }}>
-              +30% Automatización Operativa
+            <span style={{ fontSize: 12, color: '#a1a1aa', lineHeight: 1.3 }}>
+              Incidentes ITSM · -25% MTTR
             </span>
           </div>
 
@@ -195,17 +197,17 @@ export default async function Image() {
               display: 'flex',
               flexDirection: 'column',
               width: '235px',
-              backgroundColor: 'rgba(59, 130, 246, 0.04)',
-              border: '1px solid rgba(59, 130, 246, 0.16)',
+              backgroundColor: 'rgba(99, 102, 241, 0.05)',
+              border: '1px solid rgba(99, 102, 241, 0.2)',
               borderRadius: '12px',
               padding: '14px 18px',
             }}
           >
-            <span style={{ fontSize: 22, fontWeight: 700, color: '#60a5fa', marginBottom: '4px' }}>
-              MCP &amp; Agentic
+            <span style={{ fontSize: 22, fontWeight: 700, color: '#818cf8', marginBottom: '4px' }}>
+              gripm &amp; MCP
             </span>
-            <span style={{ fontSize: 12, color: '#71717a', lineHeight: 1.3 }}>
-              gripm · Frameworks Autónomos
+            <span style={{ fontSize: 12, color: '#a1a1aa', lineHeight: 1.3 }}>
+              Tooling Open Source &amp; Agentes IA
             </span>
           </div>
 
@@ -215,17 +217,17 @@ export default async function Image() {
               display: 'flex',
               flexDirection: 'column',
               width: '235px',
-              backgroundColor: 'rgba(168, 85, 247, 0.04)',
-              border: '1px solid rgba(168, 85, 247, 0.16)',
+              backgroundColor: 'rgba(255, 255, 255, 0.025)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
               borderRadius: '12px',
               padding: '14px 18px',
             }}
           >
-            <span style={{ fontSize: 22, fontWeight: 700, color: '#c084fc', marginBottom: '4px' }}>
-              Local-First
+            <span style={{ fontSize: 22, fontWeight: 700, color: '#f4f4f5', marginBottom: '4px' }}>
+              End-to-End
             </span>
-            <span style={{ fontSize: 12, color: '#71717a', lineHeight: 1.3 }}>
-              Sistemas Soberanos &amp; Zero-Knowledge
+            <span style={{ fontSize: 12, color: '#a1a1aa', lineHeight: 1.3 }}>
+              Negocio, Producto &amp; Arquitectura
             </span>
           </div>
         </div>

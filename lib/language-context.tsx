@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useSyncExternalStore, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useSyncExternalStore, type ReactNode } from 'react'
 import type { Language } from '@/lib/translations'
 
 interface LanguageContextType {
@@ -12,6 +12,8 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 function getLanguageSnapshot(): Language {
   if (typeof window === 'undefined') return 'es'
+  const urlLang = new URLSearchParams(window.location.search).get('lang')
+  if (urlLang === 'es' || urlLang === 'en') return urlLang
   const saved = localStorage.getItem('lang') as Language | null
   if (saved === 'es' || saved === 'en') return saved
   return navigator.language.startsWith('en') ? 'en' : 'es'
@@ -42,9 +44,18 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     getLanguageServerSnapshot
   )
 
+  useEffect(() => {
+    document.documentElement.lang = lang
+  }, [lang])
+
   const setLang = (l: Language) => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('lang', l)
+      const url = new URL(window.location.href)
+      if (url.searchParams.has('lang')) {
+        url.searchParams.set('lang', l)
+        window.history.replaceState({}, '', url.toString())
+      }
       document.documentElement.lang = l
       for (const listener of listeners) {
         listener()

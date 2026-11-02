@@ -157,7 +157,7 @@ const TOPOLOGIES: Record<string, SystemArchitecture> = {
         productBadge: { es: 'Soberanía en Localhost', en: 'Local Sovereignty' },
         archBadge: { es: 'Atomic In-Memory Router', en: 'Atomic In-Memory Router' },
         resilienceFallback: {
-          es: 'MCP stdio connection severed ➔ Graceful fallback to local Markdown backlog on disk (.md). Zero data loss.',
+          es: 'Conexión MCP stdio interrumpida ➔ Fallback limpio al backlog Markdown local en disco (.md). Cero pérdida de datos.',
           en: 'MCP stdio connection severed ➔ Graceful fallback to local Markdown backlog on disk (.md). Zero data loss.',
         },
       },
@@ -479,7 +479,7 @@ const TOPOLOGIES: Record<string, SystemArchitecture> = {
         productBadge: { es: 'Sub-45ms de Respuesta', en: 'Sub-45ms Response' },
         archBadge: { es: 'Next.js Edge Middleware', en: 'Next.js Edge Middleware' },
         resilienceFallback: {
-          es: 'Edge isolation engaged ➔ Read-only cached tenant view served. Write operations queued in client buffer.',
+          es: 'Aislamiento en el Edge activado ➔ Se sirve vista de organización en caché de solo lectura. Escrituras encoladas en cliente.',
           en: 'Edge isolation engaged ➔ Read-only cached tenant view served. Write operations queued in client buffer.',
         },
         contractToNext: {
@@ -719,7 +719,7 @@ const TOPOLOGIES: Record<string, SystemArchitecture> = {
         productBadge: { es: '100% Offline Soberano', en: '100% Sovereign Offline' },
         archBadge: { es: 'Encrypted IndexedDB Blobs', en: 'Encrypted IndexedDB Blobs' },
         resilienceFallback: {
-          es: 'Network partition ➔ AES-GCM local-first IndexedDB engine retains full double-entry ledger integrity.',
+          es: 'Partición de red detectada ➔ El motor local-first IndexedDB con AES-GCM conserva el 100% de la integridad contable de partida doble.',
           en: 'Network partition ➔ AES-GCM local-first IndexedDB engine retains full double-entry ledger integrity.',
         },
       },
@@ -1482,7 +1482,7 @@ export function SystemTopologyViewer({
                   onClick={() => setIsModalOpen(false)}
                   className="p-1.5 rounded-lg border border-white/10 hover:border-white/30 text-zinc-400 hover:text-white transition-colors cursor-pointer"
                   title={lang === 'es' ? 'Cerrar (Esc)' : 'Close (Esc)'}
-                  aria-label="Cerrar modal"
+                  aria-label={lang === 'es' ? 'Cerrar modal' : 'Close modal'}
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

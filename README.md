@@ -2,9 +2,9 @@
 
 > **Open-source digital presence, living system index, and architectural chronicle of Pablo Javier Rodríguez (Solutions Architect & Digital Products Builder).**
 
-[![Next.js](https://img.shields.io/badge/Next.js-16.2-black?logo=nextdotjs)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=black)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.4-black?logo=nextdotjs)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.3-61dafb?logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg)](LICENSE)
 
@@ -29,12 +29,12 @@ This repository hosts the personal website and portfolio for **Pablo Javier Rodr
 
 | Layer | Technology |
 |---|---|
-| **Framework** | Next.js 16 (App Router with Turbopack) |
-| **UI Library** | React 19 + TypeScript |
+| **Framework** | Next.js 16.4 (App Router with Turbopack) |
+| **UI Library** | React 19.3 + TypeScript 5 (Strict) |
 | **Styling** | Tailwind CSS v4 |
-| **Components** | shadcn/ui (Base UI + Lucide) |
+| **Icons** | Lucide React |
 | **Typography** | Geist Sans & Geist Mono |
-| **i18n** | Custom lightweight React Context with zero SSR flash |
+| **i18n** | Custom lightweight React 19 `useSyncExternalStore` Context (ES / EN + `?lang=` query support) |
 
 ---
 

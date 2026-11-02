@@ -159,7 +159,9 @@ export function ChronicleSection() {
                   <span className="sm:hidden">
                     {lang === 'es' ? 'Automatizado' : 'Automated'}
                   </span>
-                  <span className="text-[10px] text-emerald-400 font-bold hidden md:inline">(Arquitectura Pablo)</span>
+                  <span className="text-[10px] text-emerald-400 font-bold hidden md:inline">
+                    {lang === 'es' ? '(Arquitectura Pablo)' : "(Pablo's Architecture)"}
+                  </span>
                 </button>
                 <button
                   onClick={() => setDeltaMode('legacy')}
@@ -489,7 +491,7 @@ export function ChronicleSection() {
                     {c.outcomes.map((o, i) => (
                       <div key={i} className="flex items-start gap-2 text-xs text-zinc-300">
                         <span className="text-emerald-500 shrink-0 mt-0.5">✓</span>
-                        <span>{o}</span>
+                        <span>{o[lang]}</span>
                       </div>
                     ))}
                   </div>

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useLanguage } from '@/lib/language-context'
-import { t } from '@/lib/translations'
+import { t, translations } from '@/lib/translations'
 import { profile } from '@/lib/content'
 import {
   Copy,
@@ -20,20 +20,7 @@ export function ContactSection() {
   const [copiedTemplate, setCopiedTemplate] = useState(false)
   const [showActionBar, setShowActionBar] = useState(false)
 
-  const items = [
-    {
-      title: lang === 'es' ? 'Advisory técnico o de producto' : 'Technical or product advisory',
-      desc: lang === 'es' ? 'Arquitectura de sistemas, estrategia de producto, OKRs' : 'Systems architecture, product strategy, OKRs',
-    },
-    {
-      title: lang === 'es' ? 'Proyectos con impacto real' : 'Real-impact projects',
-      desc: lang === 'es' ? 'Transformación digital, automatización, IA agentica' : 'Digital transformation, automation, agentic AI',
-    },
-    {
-      title: lang === 'es' ? 'Co-fundación o construcción conjunta' : 'Co-founding or joint ventures',
-      desc: lang === 'es' ? 'Si tenés una idea ambiciosa y necesitás quien la arquitecte' : "If you have an ambitious idea that needs an architect",
-    },
-  ]
+  const items = translations[lang].contact.items
 
   const introTemplate =
     lang === 'es'
