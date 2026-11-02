@@ -6,8 +6,6 @@ import { Menu, X } from 'lucide-react'
 import { useLanguage } from '@/lib/language-context'
 import { t } from '@/lib/translations'
 import { LanguageSwitcher } from '@/components/language-switcher'
-import { LensSwitcher } from '@/components/lens-switcher'
-import { CommandPaletteTrigger } from '@/components/command-palette'
 import { profile } from '@/lib/content'
 
 export function Navigation() {
@@ -27,7 +25,7 @@ export function Navigation() {
       setScrolled(window.scrollY > 15)
 
       const sectionIds = ['systems', 'experience', 'principles', 'contact']
-      const scrollPosition = window.scrollY + 160
+      const scrollPosition = window.scrollY + 120
 
       for (const id of sectionIds) {
         const el = document.getElementById(id)
@@ -41,7 +39,7 @@ export function Navigation() {
         }
       }
 
-      if (window.scrollY < 200) {
+      if (window.scrollY < 180) {
         setActiveSection('')
       }
     }
@@ -55,9 +53,13 @@ export function Navigation() {
     e.preventDefault()
     setActiveSection(id)
     setMobileMenuOpen(false)
-    const target = document.querySelector(href)
+
+    const target = document.querySelector(href) as HTMLElement | null
     if (target) {
-      target.scrollIntoView({ behavior: 'smooth' })
+      // Find the inner heading or title for pixel-perfect positioning right below header
+      const heading = target.querySelector('h2') || target
+      const topOffset = heading.getBoundingClientRect().top + window.scrollY - 76
+      window.scrollTo({ top: Math.max(0, topOffset), behavior: 'smooth' })
     }
   }
 
@@ -69,9 +71,9 @@ export function Navigation() {
           : 'border-white/[0.04] bg-[#0d0f14]/75'
       }`}
     >
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3 sm:gap-4">
-        {/* Brand + Availability Status Badge */}
-        <div className="flex items-center gap-3 shrink-0">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 h-14 flex items-center justify-between gap-4">
+        {/* Left: Brand Identity */}
+        <div className="flex items-center shrink-0">
           <Link
             href="/"
             onClick={(e) => {
@@ -82,20 +84,16 @@ export function Navigation() {
                 window.scrollTo({ top: 0, behavior: 'smooth' })
               }
             }}
-            className="flex items-center gap-1.5 group cursor-pointer"
+            className="flex items-center gap-1.5 group cursor-pointer py-1"
             aria-label="Home"
           >
             <span className="font-mono text-sm font-bold text-white tracking-tight group-hover:text-emerald-400 transition-colors">
               /{profile.handle}
             </span>
           </Link>
-          <span className="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-mono text-emerald-400 whitespace-nowrap">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            {t(lang, 'status.available')}
-          </span>
         </div>
 
-        {/* Nav Links with ScrollSpy pill */}
+        {/* Center: Editorial Nav Links (Clean, minimal, centered) */}
         <nav className="hidden md:flex items-center gap-1 p-0.5 rounded-lg bg-white/[0.02] border border-white/[0.04]">
           {links.map((l) => {
             const isActive = activeSection === l.id
@@ -104,7 +102,7 @@ export function Navigation() {
                 key={l.href}
                 href={l.href}
                 onClick={(e) => handleLinkClick(e, l.href, l.id)}
-                className={`relative px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 cursor-pointer ${
+                className={`relative px-3.5 py-1.5 text-xs font-medium rounded-md transition-all duration-200 cursor-pointer text-center min-w-[5.25rem] ${
                   isActive
                     ? 'text-white bg-white/[0.08] shadow-sm font-semibold'
                     : 'text-zinc-400 hover:text-white hover:bg-white/[0.03]'
@@ -116,15 +114,14 @@ export function Navigation() {
           })}
         </nav>
 
-        {/* Right: lens + palette + lang + CTA */}
-        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-          <LensSwitcher className="hidden sm:inline-flex" />
-          <CommandPaletteTrigger />
+        {/* Right: Language Switcher + Direct Contact CTA */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <LanguageSwitcher />
+
           <a
             href="#contact"
             onClick={(e) => handleLinkClick(e, '#contact', 'contact')}
-            className={`hidden sm:inline-block px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer shadow-sm ${
+            className={`hidden sm:inline-block px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer shadow-sm whitespace-nowrap ${
               activeSection === 'contact'
                 ? 'bg-emerald-400 text-zinc-950 hover:bg-emerald-300'
                 : 'bg-white text-zinc-900 hover:bg-zinc-200 hover:shadow'
@@ -177,18 +174,6 @@ export function Navigation() {
             >
               {t(lang, 'nav.contact')}
             </a>
-          </div>
-
-          <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between">
-            <span className="text-xs font-mono text-zinc-500">
-              {lang === 'es' ? 'Perspectiva' : 'Perspective'}
-            </span>
-            <LensSwitcher className="inline-flex" />
-          </div>
-
-          <div className="pt-1 flex items-center gap-1.5 text-[11px] font-mono text-emerald-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            {t(lang, 'status.available')}
           </div>
         </div>
       )}

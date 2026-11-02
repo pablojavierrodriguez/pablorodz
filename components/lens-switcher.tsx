@@ -16,12 +16,23 @@ export function LensSwitcher({ className = '', compact = false }: LensSwitcherPr
 
   const tooltips = {
     product: {
-      es: 'Lente de Producto: Visión PM · métricas de negocio, valor y problemas resueltos',
-      en: 'Product Lens: PM view · business metrics, user value & problems solved',
+      es: 'Perspectiva de Producto: Visión PM, impacto en negocio y problemas resueltos',
+      en: 'Product Perspective: PM view, business impact & problems solved',
     },
     arch: {
-      es: 'Lente de Arquitectura: Visión Arquitecto · protocolos, latencias, esquemas y resiliencia',
-      en: 'Architecture Lens: Solutions Architect view · protocols, latencies, schemas & resilience',
+      es: 'Perspectiva de Arquitectura: Protocolos, contratos, resiliencia y esquemas técnicos',
+      en: 'Architecture Perspective: Protocols, contracts, resilience & technical schemas',
+    },
+  }
+
+  const labels = {
+    product: {
+      es: compact ? 'Prod' : 'Producto',
+      en: compact ? 'PM' : 'Product',
+    },
+    arch: {
+      es: compact ? 'Arq' : 'Arquitectura',
+      en: compact ? 'Arch' : 'Architecture',
     },
   }
 
@@ -45,7 +56,7 @@ export function LensSwitcher({ className = '', compact = false }: LensSwitcherPr
       {/* Switcher Pill */}
       <div
         role="radiogroup"
-        aria-label={lang === 'es' ? 'Selector de perspectiva técnica y de producto' : 'Product and Architecture Lens Selector'}
+        aria-label={lang === 'es' ? 'Selector de perspectiva: Producto o Arquitectura' : 'Lens Selector: Product or Architecture'}
         tabIndex={0}
         onKeyDown={handleKeyDown}
         className="relative inline-flex items-center p-0.5 rounded-full bg-[#0d0f14] border border-white/10 shadow-inner focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/40 select-none"
@@ -72,7 +83,7 @@ export function LensSwitcher({ className = '', compact = false }: LensSwitcherPr
                 : 'bg-zinc-600'
             }`}
           />
-          <span>{compact ? 'PM' : 'Product'}</span>
+          <span>{labels.product[lang]}</span>
         </button>
 
         {/* Arch Lens Button */}
@@ -97,7 +108,7 @@ export function LensSwitcher({ className = '', compact = false }: LensSwitcherPr
                 : 'bg-zinc-600'
             }`}
           />
-          <span>{compact ? 'Arch' : 'Arch'}</span>
+          <span>{labels.arch[lang]}</span>
         </button>
       </div>
 

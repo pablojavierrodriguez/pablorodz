@@ -48,14 +48,15 @@ export function CommandPaletteTrigger({ className = '' }: { className?: string }
     <button
       type="button"
       onClick={openCommandPalette}
-      className={`group flex items-center gap-2 px-2 sm:px-2.5 py-1 rounded-md text-xs font-mono border border-white/10 bg-white/[0.03] text-zinc-400 hover:text-white hover:border-white/20 hover:bg-white/[0.06] transition-all cursor-pointer ${className}`}
+      className={`group inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] sm:text-[11px] font-mono border border-white/10 bg-white/[0.04] text-zinc-300 hover:text-white hover:border-white/20 hover:bg-white/[0.08] transition-all cursor-pointer ${className}`}
       aria-label={lang === 'es' ? 'Abrir paleta de comandos (Ctrl+K)' : 'Open command palette (Cmd+K)'}
+      title={lang === 'es' ? 'Buscar / Paleta de comandos (Ctrl+K)' : 'Search / Command palette (Cmd+K)'}
     >
-      <Search className="w-3.5 h-3.5 text-zinc-400 group-hover:text-emerald-400 transition-colors shrink-0" />
-      <span className="hidden md:inline text-zinc-400 group-hover:text-zinc-200">
-        {lang === 'es' ? 'Buscar...' : 'Search...'}
+      <Search className="w-3 h-3 text-zinc-400 group-hover:text-emerald-400 transition-colors shrink-0" />
+      <span className="hidden xl:inline text-zinc-400 group-hover:text-zinc-200">
+        {lang === 'es' ? 'Buscar' : 'Search'}
       </span>
-      <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-white/[0.08] text-[10px] text-zinc-400 border border-white/[0.08] font-mono">
+      <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1 py-0.2 rounded bg-white/[0.08] text-[9px] text-zinc-400 border border-white/[0.08] font-mono">
         <Command className="w-2.5 h-2.5" />
         <span>K</span>
       </kbd>
@@ -299,7 +300,7 @@ export function CommandPalette() {
       },
       {
         id: 'quick-github',
-        title: 'GitHub — @pablojavierrodriguez',
+        title: 'GitHub · @pablojavierrodriguez',
         subtitle: lang === 'es' ? 'Repositorios abiertos, código de gripm y agentes' : 'Open-source repositories, gripm codebase and agents',
         group: 'quickLinks',
         icon: <ExternalLink className="w-4 h-4 text-zinc-400" />,
@@ -312,7 +313,7 @@ export function CommandPalette() {
       },
       {
         id: 'quick-linkedin',
-        title: 'LinkedIn — Pablo Javier Rodríguez',
+        title: 'LinkedIn · Pablo Javier Rodríguez',
         subtitle: lang === 'es' ? 'Perfil profesional, validaciones y red' : 'Professional profile, endorsements and network',
         group: 'quickLinks',
         icon: <ExternalLink className="w-4 h-4 text-sky-400" />,
