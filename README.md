@@ -3,7 +3,7 @@
 > **Open-source digital presence, living system index, and architectural chronicle of Pablo Javier Rodríguez (Solutions Architect & Digital Products Builder).**
 
 [![Production Website](https://img.shields.io/badge/Live_Site-pablorodz.vercel.app-emerald?style=for-the-badge&logo=vercel&logoColor=white)](https://pablorodz.vercel.app)
-[![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-Redirects_to_Live-181717?style=for-the-badge&logo=github&logoColor=white)](https://pablojavierrodriguez.github.io)
+[![GitHub Repository](https://img.shields.io/badge/GitHub-pablorodz-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/pablojavierrodriguez/pablorodz)
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.4-black?logo=nextdotjs)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.3-61dafb?logo=react&logoColor=black)](https://react.dev/)
@@ -12,7 +12,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg)](LICENSE)
 
 🌐 **Live Production Application:** [https://pablorodz.vercel.app](https://pablorodz.vercel.app)  
-🔁 **GitHub Pages Redirection:** [https://pablojavierrodriguez.github.io](https://pablojavierrodriguez.github.io) (instant convergence to production)
+📦 **Source Repository:** [https://github.com/pablojavierrodriguez/pablorodz](https://github.com/pablojavierrodriguez/pablorodz)
 
 ---
 
@@ -50,11 +50,11 @@ This repository hosts the personal website and portfolio for **Pablo Javier Rodr
 
 ```
                     ┌────────────────────────────────────────────────────────┐
-                    │               pablojavierrodriguez.github.io          │
-                    │                    (GitHub Pages Root)                 │
+                    │       https://github.com/pablojavierrodriguez/pablorodz │
+                    │                     (Source Repository)                │
                     └───────────────────────────┬────────────────────────────┘
                                                 │
-                                                ▼  0ms Meta-Refresh / Canonical 301
+                                                ▼  Continuous Deployment (main)
                     ┌────────────────────────────────────────────────────────┐
                     │             https://pablorodz.vercel.app               │
                     │               (Production Next.js 16)                  │
@@ -67,7 +67,6 @@ This repository hosts the personal website and portfolio for **Pablo Javier Rodr
 ```
 
 - **Primary Production Environment:** Deployed on [Vercel](https://vercel.com) (`https://pablorodz.vercel.app`) with full serverless runtime support for dynamic edge API endpoints (`/api/live-stats`), dynamic OpenGraph generation (`/opengraph-image`, `/twitter-image`), and edge caching.
-- **GitHub Pages Convergence:** Because this repository is named `pablojavierrodriguez.github.io`, GitHub automatically enables Pages for the account. To guarantee that visitors immediately reach the full dynamic application rather than an unstyled markdown document, GitHub Pages serves a zero-delay static redirect (`index.html` + `404.html` + `.nojekyll`) pointing to the Vercel production deployment.
 - **Branch Strategy:**
   - `main`: Production-ready, verified releases deployed directly to Vercel.
   - `dev`: Active development and feature staging branch.
@@ -85,8 +84,8 @@ This repository hosts the personal website and portfolio for **Pablo Javier Rodr
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/pablojavierrodriguez/pablojavierrodriguez.github.io.git
-   cd pablojavierrodriguez.github.io
+   git clone https://github.com/pablojavierrodriguez/pablorodz.git
+   cd pablorodz
    ```
 
 2. Install dependencies:
