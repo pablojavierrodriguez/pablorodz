@@ -43,3 +43,6 @@ next-env.d.ts
 # Gripm local-first private backlog
 /backlog
 .gripm
+
+.vercel
+.env*
