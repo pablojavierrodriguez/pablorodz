@@ -96,20 +96,20 @@ export function TelemetryBar() {
         aria-label={lang === 'es' ? 'Barra de estado y controles del sistema' : 'System status and controls bar'}
         className="fixed bottom-0 inset-x-0 z-40 h-9 sm:h-10 bg-[#080a0f]/95 backdrop-blur-md border-t border-white/[0.08] text-[11px] font-mono text-zinc-400 select-none shadow-[0_-4px_24px_rgba(0,0,0,0.6)]"
       >
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 h-full flex items-center justify-between gap-2 sm:gap-4">
+        <div className="max-w-6xl mx-auto px-3 sm:px-8 h-full flex items-center justify-between gap-1.5 sm:gap-4">
           
           {/* LEFT: Availability indicator (The single definitive source of availability!) */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <div className="inline-flex items-center gap-1.5 py-0.5 text-zinc-300">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
               <span className="font-semibold text-emerald-400 tracking-wider text-[10px] sm:text-[11px] whitespace-nowrap">
-                <span className="hidden sm:inline">
+                <span className="hidden lg:inline">
                   {lang === 'es' ? 'DISPONIBLE PARA PROYECTOS' : 'AVAILABLE FOR PROJECTS'}
                 </span>
-                <span className="sm:hidden">
+                <span className="lg:hidden">
                   {lang === 'es' ? 'DISPONIBLE' : 'AVAILABLE'}
                 </span>
               </span>
@@ -122,25 +122,25 @@ export function TelemetryBar() {
           </div>
 
           {/* RIGHT: Quick Command Palette Trigger + Buenos Aires Clock + Specs Drawer Trigger */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
             {/* Command Palette Trigger */}
             <CommandPaletteTrigger className="h-7 px-2" />
 
-            <span className="text-zinc-700 hidden sm:inline">|</span>
+            <span className="text-zinc-700 hidden lg:inline">|</span>
 
             {/* Buenos Aires Clock */}
             <div
-              className="hidden xs:inline-flex items-center gap-1.5 text-zinc-300 text-[10px] sm:text-[11px]"
+              className="hidden lg:inline-flex items-center gap-1.5 text-zinc-300 text-[10px] sm:text-[11px]"
               title={lang === 'es' ? 'Hora local en Buenos Aires, Argentina (ART, UTC-3)' : 'Local time in Buenos Aires, Argentina (ART, UTC-3)'}
             >
               <Clock className="w-3 h-3 text-zinc-500 shrink-0" />
-              <span className="font-semibold text-white tracking-tight">
+              <span className="font-semibold text-white tracking-tight" suppressHydrationWarning>
                 {mounted ? time : '17:00:00'}
               </span>
               <span className="text-zinc-500 text-[10px]">ART</span>
             </div>
 
-            <span className="text-zinc-700 hidden md:inline">|</span>
+            <span className="text-zinc-700 hidden lg:inline">|</span>
 
             {/* Popover / Drawer Toggle Trigger: Minimalist Specs button */}
             <button
@@ -149,14 +149,17 @@ export function TelemetryBar() {
               onClick={() => setIsOpen((prev) => !prev)}
               aria-expanded={isOpen}
               aria-controls="specs-popover"
-              className={`inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-md text-[10px] sm:text-[11px] font-mono transition-all duration-200 cursor-pointer whitespace-nowrap ${
+              className={`inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-md text-[10px] sm:text-[11px] font-mono transition-all duration-200 cursor-pointer whitespace-nowrap ${
                 isOpen
                   ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
                   : 'bg-white/[0.04] text-zinc-300 hover:text-white hover:bg-white/[0.08] border border-white/[0.08]'
               }`}
             >
               <Layers className="w-3 h-3 text-emerald-400 shrink-0" />
-              <span className="hidden sm:inline">
+              <span className="lg:hidden">
+                {lang === 'es' ? 'Ficha' : 'Specs'}
+              </span>
+              <span className="hidden lg:inline">
                 {lang === 'es' ? 'Ficha Técnica' : 'Site Specs'}
               </span>
               {isOpen ? (

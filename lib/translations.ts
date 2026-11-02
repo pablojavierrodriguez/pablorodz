@@ -3,7 +3,7 @@ export type Language = 'es' | 'en'
 export const translations = {
   es: {
     meta: {
-      title: 'Pablo Javier Rodríguez · Solutions Architect & Digital Products Builder',
+      title: 'Pablo Javier Rodríguez · Arquitecto de Soluciones y Creador de Productos Digitales',
       description:
         'Diseño y construyo soluciones de software y productos digitales que funcionan. Ayudo a startups, empresas y emprendedores a transformar ideas y necesidades de negocio en sistemas sólidos, simples y listos para operar.',
     },
@@ -19,7 +19,7 @@ export const translations = {
       location: 'Argentina · Remoto Global',
     },
     hero: {
-      role: 'Solutions Architect & Digital Products Builder',
+      role: 'Arquitecto de Soluciones y Creador de Productos Digitales',
       thesis:
         'Diseño y construyo soluciones de software y productos digitales que funcionan. Ayudo a startups, empresas y emprendedores a transformar ideas y necesidades de negocio en sistemas sólidos, simples y listos para operar.',
       cta_systems: 'Ver sistemas',
@@ -81,7 +81,7 @@ export const translations = {
         'No busco cualquier proyecto. Busco problemas donde pueda poner lo técnico, lo estratégico y lo humano al mismo tiempo.',
     },
     footer: {
-      role: 'Solutions Architect & Digital Products Builder',
+      role: 'Arquitecto de Soluciones y Creador de Productos Digitales',
       tagline: 'Construido con propósito. Sin templates, sin relleno.',
       copyright: '© 2026 · Argentina · Remote-first',
       lang_note: 'Este sitio también está disponible en inglés.',

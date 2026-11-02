@@ -99,8 +99,8 @@ function SystemRow({
           </div>
         </div>
 
-        <div className="flex items-center gap-2 pl-11 sm:pl-0 font-mono text-[11px] text-zinc-500 shrink-0">
-          <span className="text-xs text-zinc-400 group-hover:text-white transition-colors flex items-center justify-end gap-1 min-w-[6.5rem]">
+        <div className="flex items-center justify-between sm:justify-end gap-2 pl-11 sm:pl-0 font-mono text-[11px] text-zinc-500 shrink-0">
+          <span className="text-xs text-zinc-400 group-hover:text-white transition-colors flex items-center justify-end gap-1 min-w-0 sm:min-w-[6.5rem]">
             {isSelected ? (lang === 'es' ? 'Inspeccionando' : 'Inspecting') : (lang === 'es' ? 'Ver Ficha' : 'View Spec')}
             <span className={`inline-block transition-transform duration-200 ${isSelected ? 'translate-x-1 text-white' : 'group-hover:translate-x-1'}`}>
               →
@@ -294,12 +294,14 @@ function SpecSheet({
             )}
 
             {/* Product Key Capability Pill */}
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-black/40 border border-white/[0.05] text-[11px] text-zinc-300">
-              <span className="text-amber-400 font-bold">✦</span>
-              <span className="font-mono text-[10px] text-zinc-400 uppercase tracking-wider font-semibold">
-                {lang === 'es' ? 'Diferencial clave:' : 'Key Advantage:'}
-              </span>
-              <span className="text-zinc-200 truncate">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2 px-3 py-2 rounded-lg bg-black/40 border border-white/[0.05] text-[11px] text-zinc-300">
+              <div className="flex items-center gap-1.5 shrink-0">
+                <span className="text-amber-400 font-bold">✦</span>
+                <span className="font-mono text-[10px] text-zinc-400 uppercase tracking-wider font-semibold">
+                  {lang === 'es' ? 'Diferencial clave:' : 'Key Advantage:'}
+                </span>
+              </div>
+              <span className="text-zinc-200 text-xs sm:text-[11px] leading-relaxed flex-1">
                 {prodSpec ? prodSpec.highlight[lang] : system.tagline[lang]}
               </span>
             </div>

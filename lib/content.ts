@@ -8,7 +8,7 @@ export const profile = {
   name: 'Pablo Javier Rodríguez',
   handle: 'pablorodz',          // placeholder until domain/handle is decided
   role: {
-    es: 'Solutions Architect & Digital Products Builder',
+    es: 'Arquitecto de Soluciones y Creador de Productos Digitales',
     en: 'Solutions Architect & Digital Products Builder',
   },
   location: {
