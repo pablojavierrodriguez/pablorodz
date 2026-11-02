@@ -52,8 +52,8 @@ export function ContactSection() {
     profile.email
   )}&su=${encodeURIComponent(
     lang === 'es'
-      ? 'Agendar 15 min — Consulta de Arquitectura & Producto'
-      : 'Schedule 15 min — Architecture & Product Advisory'
+      ? 'Agendar 15 min: Consulta de Arquitectura & Producto'
+      : 'Schedule 15 min: Architecture & Product Advisory'
   )}&body=${encodeURIComponent(
     lang === 'es'
       ? 'Hola Pablo, estuve revisando tu portfolio. Me gustaría coordinar una charla breve de 15 minutos para explorar una oportunidad o asesoría técnica.'
@@ -86,8 +86,8 @@ export function ContactSection() {
   }
 
   return (
-    <section id="contact" className="py-24 px-5 border-t border-white/[0.04] scroll-mt-14">
-      <div className="max-w-4xl mx-auto">
+    <section id="contact" className="pt-14 pb-24 border-t border-white/[0.04] scroll-mt-20">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8">
         <div className="mb-10">
           <span className="font-mono text-[11px] text-zinc-500 uppercase tracking-widest block mb-1">04</span>
           <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{t(lang, 'contact.title')}</h2>
@@ -111,7 +111,11 @@ export function ContactSection() {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                     <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
                   </span>
-                  <span>⚡ &lt; 24h Response Time &middot; Direct Architect Channel</span>
+                  <span>
+                    {lang === 'es'
+                      ? '⚡ Respuesta < 24 hs · Canal directo'
+                      : '⚡ < 24h Response Time · Direct Channel'}
+                  </span>
                 </span>
               </div>
 
@@ -166,20 +170,20 @@ export function ContactSection() {
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 font-semibold flex items-center gap-1.5">
                     <Sparkles className="w-3 h-3 text-indigo-400" />
-                    {lang === 'es' ? 'Handoff de Conversión Inmediato' : 'Instant Conversion Handoff'}
+                    {lang === 'es' ? 'Opciones de Contacto Directo' : 'Direct Contact Shortcuts'}
                   </span>
                   <span className="text-[9px] font-mono text-zinc-500">
                     {lang === 'es' ? 'Cero fricción' : 'Zero friction'}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div className="flex flex-col sm:flex-col lg:flex-row gap-2">
                   {/* [ ✉️ Abrir en Gmail ] */}
                   <a
                     href={gmailWebIntentUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-lg text-[11px] font-mono font-medium text-white bg-white/[0.04] hover:bg-indigo-500/15 hover:text-indigo-300 border border-white/[0.08] hover:border-indigo-500/30 transition-all cursor-pointer text-center group"
+                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-[11px] font-mono font-medium text-white bg-white/[0.04] hover:bg-indigo-500/15 hover:text-indigo-300 border border-white/[0.08] hover:border-indigo-500/30 transition-all cursor-pointer text-center group whitespace-nowrap"
                     title={lang === 'es' ? 'Redactar directamente en Gmail Web' : 'Draft directly in Gmail Web'}
                   >
                     <Mail className="w-3.5 h-3.5 text-indigo-400 group-hover:scale-110 transition-transform" />
@@ -190,7 +194,7 @@ export function ContactSection() {
                   <button
                     type="button"
                     onClick={handleCopyTemplate}
-                    className={`flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-lg text-[11px] font-mono font-medium transition-all cursor-pointer text-center ${
+                    className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-[11px] font-mono font-medium transition-all cursor-pointer text-center whitespace-nowrap ${
                       copiedTemplate
                         ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 animate-pulse'
                         : 'bg-white/[0.04] text-zinc-300 hover:text-white hover:bg-white/[0.08] border border-white/[0.08]'
@@ -205,7 +209,7 @@ export function ContactSection() {
                     ) : (
                       <>
                         <FileText className="w-3.5 h-3.5 text-zinc-400" />
-                        <span>{lang === 'es' ? '📋 Copiar Intro Template' : '📋 Copy Intro Template'}</span>
+                        <span>{lang === 'es' ? '📋 Copiar Intro' : '📋 Copy Intro'}</span>
                       </>
                     )}
                   </button>
@@ -215,7 +219,7 @@ export function ContactSection() {
                     href={schedule15MinUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-lg text-[11px] font-mono font-medium text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 hover:border-amber-500/40 transition-all cursor-pointer text-center group"
+                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-[11px] font-mono font-medium text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 hover:border-amber-500/40 transition-all cursor-pointer text-center group whitespace-nowrap"
                     title={lang === 'es' ? 'Coordinar llamada de 15 minutos' : 'Schedule a 15-minute sync'}
                   >
                     <Calendar className="w-3.5 h-3.5 text-amber-400 group-hover:scale-110 transition-transform" />
@@ -262,7 +266,7 @@ export function ContactSection() {
             {/* Location card (preserved intact) */}
             <div className="p-4 rounded-xl border border-white/[0.06] bg-white/[0.01]">
               <p className="text-[11px] font-mono text-zinc-500 mb-1">{t(lang, 'contact.location_label')}</p>
-              <p className="text-sm text-white">{profile.location.country} — {profile.location.timezone}</p>
+              <p className="text-sm text-white">{profile.location.country} ({profile.location.timezone})</p>
               <p className="text-[11px] text-zinc-500 mt-0.5">{t(lang, 'contact.location_detail')}</p>
             </div>
           </div>

@@ -793,6 +793,7 @@ function NodeCard({
   isFailed,
   chaosMode,
   onNodeClick,
+  onInspectNode,
 }: {
   node: ArchitectureNode
   lang: 'es' | 'en'
@@ -801,25 +802,42 @@ function NodeCard({
   isFailed?: boolean
   chaosMode?: boolean
   onNodeClick?: () => void
+  onInspectNode?: (node: ArchitectureNode) => void
 }) {
   const style = CATEGORY_STYLES[node.category]
 
+  const handleClick = () => {
+    if (chaosMode) {
+      onNodeClick?.()
+    } else {
+      onInspectNode?.(node)
+    }
+  }
+
   return (
     <div
-      onClick={chaosMode ? onNodeClick : undefined}
-      className={`group relative rounded-xl border p-4 transition-all duration-300 ${
+      onClick={handleClick}
+      className={`group relative rounded-xl border p-4 transition-all duration-300 cursor-pointer ${
         isFailed
           ? 'border-2 border-dashed border-red-500/80 bg-red-950/25 shadow-[0_0_25px_rgba(239,68,68,0.3)]'
           : isTraversed
           ? `${style.activeRing} ${style.activeBg}`
           : `border-white/[0.08] bg-[#0d1017]/90 hover:border-white/20 hover:bg-[#11151f] hover:shadow-lg hover:shadow-black/40 ${style.glow}`
-      } ${chaosMode ? 'cursor-pointer select-none ring-1 ring-white/10 hover:ring-amber-400/50' : ''}`}
+      } ${chaosMode ? 'select-none ring-1 ring-white/10 hover:ring-amber-400/50' : 'hover:ring-1 hover:ring-indigo-500/30'}`}
     >
       {/* Chaos Mode Target Prompt */}
       {chaosMode && !isFailed && (
         <div className="absolute -top-2.5 right-4 z-10 px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[9px] font-mono font-semibold tracking-wider flex items-center gap-1 shadow-md backdrop-blur">
           <span>⚡</span>
           <span>{lang === 'es' ? 'Click: inducir fallo' : 'Click: inject fault'}</span>
+        </div>
+      )}
+
+      {/* Normal Mode Inspection Prompt on hover */}
+      {!chaosMode && !isFailed && (
+        <div className="absolute -top-2.5 right-4 z-10 px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-200 border border-indigo-500/30 text-[9px] font-mono tracking-wider items-center gap-1 shadow-md backdrop-blur opacity-0 group-hover:opacity-100 transition-opacity hidden sm:flex">
+          <span>🔍</span>
+          <span>{lang === 'es' ? 'Click para inspeccionar' : 'Click to inspect'}</span>
         </div>
       )}
 
@@ -899,6 +917,118 @@ function NodeCard({
             {lang === 'es' ? 'Fallo inducido' : 'Fault injected'}
           </span>
         )}
+
+        {!isFailed && !chaosMode && (
+          <span className="text-[10px] font-mono text-zinc-500 group-hover:text-indigo-300 transition-colors hidden sm:inline-flex items-center gap-1">
+            <span>{lang === 'es' ? 'Detalles' : 'Details'}</span>
+            <span>↗</span>
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function NodeInspectorModal({
+  node,
+  lang,
+  lens,
+  onClose,
+}: {
+  node: ArchitectureNode
+  lang: 'es' | 'en'
+  lens: Lens
+  onClose: () => void
+}) {
+  const style = CATEGORY_STYLES[node.category]
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-150"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose()
+      }}
+    >
+      <div className="relative w-full max-w-lg bg-[#0c0f16] border border-white/20 rounded-2xl shadow-2xl p-5 sm:p-6 text-zinc-300 font-sans space-y-4 animate-in zoom-in-95 duration-150">
+        {/* Header */}
+        <div className="flex items-start justify-between border-b border-white/[0.08] pb-3">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className={`px-2 py-0.5 rounded text-[10px] font-mono uppercase font-bold border ${style.badge}`}>
+                {node.stage} / {node.stageLabel[lang]}
+              </span>
+              <span className="text-[10px] font-mono text-zinc-500">{node.tag}</span>
+            </div>
+            <h3 className="text-base sm:text-lg font-bold text-white font-mono">{node.title}</h3>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-white/[0.06] transition-colors cursor-pointer text-sm font-mono"
+            aria-label="Close"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Subtitle / Description */}
+        <p className="text-xs text-zinc-300 leading-relaxed">{node.subtitle[lang]}</p>
+
+        {/* Contract to Next Component */}
+        {node.contractToNext && (
+          <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-1">
+            <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider block font-semibold">
+              {lang === 'es' ? 'Contrato de Interfaz & Protocolo' : 'Interface Contract & Protocol'}
+            </span>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs font-mono">
+              <span className="text-white font-medium">{node.contractToNext.label}</span>
+              <span className="text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20 text-[11px] self-start sm:self-auto">
+                {node.contractToNext.protocol}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Resilience / Fallback Protocol */}
+        {node.resilienceFallback && (
+          <div className="p-3 rounded-xl bg-amber-500/5 border border-amber-500/20 space-y-1 text-xs">
+            <span className="text-[10px] font-mono text-amber-400 uppercase tracking-wider block font-semibold">
+              {lang === 'es' ? 'Estrategia de Resiliencia & Failover' : 'Resilience & Failover Strategy'}
+            </span>
+            <p className="text-zinc-300 font-mono text-[11px] leading-relaxed">
+              {node.resilienceFallback[lang]}
+            </p>
+          </div>
+        )}
+
+        {/* Dual Lens Perspective */}
+        <div className="grid grid-cols-2 gap-2 text-xs font-mono pt-1">
+          <div className={`p-2.5 rounded-lg border ${lens === 'product' ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-white/[0.02] border-white/[0.06]'}`}>
+            <span className="text-[9px] uppercase tracking-wider text-emerald-400 block mb-0.5 font-bold">
+              {lang === 'es' ? 'Visión Producto' : 'Product View'}
+            </span>
+            <span className="text-zinc-200 text-[11px]">{node.productBadge ? node.productBadge[lang] : '-'}</span>
+          </div>
+          <div className={`p-2.5 rounded-lg border ${lens === 'arch' ? 'bg-indigo-500/10 border-indigo-500/30' : 'bg-white/[0.02] border-white/[0.06]'}`}>
+            <span className="text-[9px] uppercase tracking-wider text-indigo-400 block mb-0.5 font-bold">
+              {lang === 'es' ? 'Visión Arquitectura' : 'Arch View'}
+            </span>
+            <span className="text-zinc-200 text-[11px]">{node.archBadge ? node.archBadge[lang] : '-'}</span>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="pt-2 border-t border-white/[0.06] flex justify-end">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-3.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-mono font-medium transition-colors cursor-pointer"
+          >
+            {lang === 'es' ? 'Cerrar Ficha' : 'Close'}
+          </button>
+        </div>
       </div>
     </div>
   )
@@ -1076,11 +1206,22 @@ export function SystemTopologyViewer({
   const [copied, setCopied] = useState(false)
 
   // Lens context integration
-  const { lens: contextLens, setLens: setContextLens } = useLens()
-  const [internalLens, setInternalLens] = useState<Lens | null>(null)
-  const effectiveLens: Lens = propLens ?? internalLens ?? contextLens ?? 'arch'
+  const { lens: contextLens } = useLens()
+  const effectiveLens: Lens = propLens ?? contextLens ?? 'arch'
 
   const structured = TOPOLOGIES[systemId]
+
+  // Zoom & Node Inspection State (Interactive Canvas Engine)
+  const [zoomLevel, setZoomLevel] = useState<number>(1.0)
+  const [inspectedNode, setInspectedNode] = useState<ArchitectureNode | null>(null)
+
+  const handleCanvasWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault()
+      const delta = e.deltaY < 0 ? 0.1 : -0.1
+      setZoomLevel((prev) => Math.min(1.5, Math.max(0.7, parseFloat((prev + delta).toFixed(2)))))
+    }
+  }
 
   // Interactive Simulation: Packet Trace State
   const [traceStatus, setTraceStatus] = useState<'idle' | 'running' | 'paused' | 'completed'>('idle')
@@ -1435,36 +1576,48 @@ export function SystemTopologyViewer({
                     </button>
                   )}
 
-                  {/* Lens Switcher */}
-                  <div className="flex items-center gap-1 p-0.5 rounded-lg border border-white/10 bg-white/[0.02]">
+                  {/* Interactive Zoom Controls */}
+                  <div className="flex items-center gap-1 p-0.5 rounded-lg border border-white/10 bg-white/[0.03]">
                     <button
                       type="button"
-                      onClick={() => {
-                        setInternalLens('product')
-                        setContextLens('product')
-                      }}
-                      className={`px-2 py-1 rounded text-[10px] font-mono transition-colors cursor-pointer ${
-                        effectiveLens === 'product'
-                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold'
-                          : 'text-zinc-400 hover:text-white'
-                      }`}
+                      onClick={() => setZoomLevel((prev) => Math.max(0.7, parseFloat((prev - 0.1).toFixed(2))))}
+                      disabled={zoomLevel <= 0.7}
+                      className="px-2 py-0.5 rounded text-xs font-mono font-bold text-zinc-300 hover:text-white disabled:opacity-30 disabled:hover:text-zinc-500 cursor-pointer"
+                      title={lang === 'es' ? 'Alejar zoom (-10%)' : 'Zoom Out (-10%)'}
                     >
-                      🎯 {lang === 'es' ? 'Producto' : 'Product'}
+                      -
                     </button>
                     <button
                       type="button"
-                      onClick={() => {
-                        setInternalLens('arch')
-                        setContextLens('arch')
-                      }}
-                      className={`px-2 py-1 rounded text-[10px] font-mono transition-colors cursor-pointer ${
-                        effectiveLens === 'arch'
-                          ? 'bg-indigo-600 text-white font-bold shadow-sm'
-                          : 'text-zinc-400 hover:text-white'
-                      }`}
+                      onClick={() => setZoomLevel(1.0)}
+                      className="px-2 py-0.5 rounded text-[10px] font-mono text-zinc-300 hover:text-white transition-colors cursor-pointer"
+                      title={lang === 'es' ? 'Restablecer zoom a 100%' : 'Reset zoom to 100%'}
                     >
-                      📐 {lang === 'es' ? 'Arquitectura' : 'Arch'}
+                      {Math.round(zoomLevel * 100)}%
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => setZoomLevel((prev) => Math.min(1.5, parseFloat((prev + 0.1).toFixed(2))))}
+                      disabled={zoomLevel >= 1.5}
+                      className="px-2 py-0.5 rounded text-xs font-mono font-bold text-zinc-300 hover:text-white disabled:opacity-30 disabled:hover:text-zinc-500 cursor-pointer"
+                      title={lang === 'es' ? 'Acercar zoom (+10%)' : 'Zoom In (+10%)'}
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  {/* Synchronized Global Lens Badge */}
+                  <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-white/10 bg-white/[0.02] text-[10px] font-mono text-zinc-400">
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        effectiveLens === 'product' ? 'bg-emerald-400' : 'bg-indigo-400'
+                      }`}
+                    />
+                    <span>
+                      {effectiveLens === 'product'
+                        ? (lang === 'es' ? 'Producto' : 'Product')
+                        : (lang === 'es' ? 'Arquitectura' : 'Arch')}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1488,10 +1641,30 @@ export function SystemTopologyViewer({
               </div>
             )}
 
-            {/* Modal Body Canvas */}
-            <div className="p-4 sm:p-6 bg-[#080a0f] [background-image:radial-gradient(rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:20px_20px] overflow-y-auto flex-1 space-y-5">
+            {/* Modal Body Canvas with Interactive Wheel Zoom */}
+            <div
+              onWheel={handleCanvasWheel}
+              className="p-4 sm:p-6 bg-[#080a0f] [background-image:radial-gradient(rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:20px_20px] overflow-y-auto flex-1 space-y-5"
+            >
               {viewMode === 'visual' && structured ? (
                 <div>
+                  {/* Interactive Canvas Controls Bar (Zoom & Pan Guide) */}
+                  <div className="mb-4 flex flex-wrap items-center justify-between gap-2 px-3 py-1.5 rounded-lg bg-black/60 border border-white/[0.08] text-[11px] font-mono text-zinc-400">
+                    <div className="flex items-center gap-2">
+                      <span className="text-zinc-500">🔍</span>
+                      <span>
+                        {lang === 'es'
+                          ? `Zoom: ${Math.round(zoomLevel * 100)}% (Ctrl + Rueda para ampliar/reducir)`
+                          : `Zoom: ${Math.round(zoomLevel * 100)}% (Ctrl + Scroll to zoom)`}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-zinc-500 text-[10px]">
+                        {lang === 'es' ? 'Click en nodos para ver contratos' : 'Click nodes to inspect contracts'}
+                      </span>
+                    </div>
+                  </div>
+
                   {/* Chaos Mode Guidance Banner */}
                   {chaosMode && (
                     <div className="mb-4 p-3 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-200 text-xs font-mono flex items-start gap-2.5 shadow-md">
@@ -1552,138 +1725,148 @@ export function SystemTopologyViewer({
                     </div>
                   )}
 
-                  {/* Architecture Topology Diagram */}
-                  {structured.layout === 'pipeline' ? (
-                    /* Linear Sequenced Pipeline */
-                    <div className="max-w-2xl mx-auto space-y-1">
-                      {structured.nodes.map((node) => {
-                        const isTraversed = activeTraversedNodeIds.includes(node.id)
-                        const isFailed = failedNodeIds.includes(node.id)
+                  {/* Zoomable Container */}
+                  <div
+                    className="origin-top transition-transform duration-150 ease-out"
+                    style={{ transform: `scale(${zoomLevel})` }}
+                  >
+                    {/* Architecture Topology Diagram */}
+                    {structured.layout === 'pipeline' ? (
+                      /* Linear Sequenced Pipeline */
+                      <div className="max-w-2xl mx-auto space-y-1">
+                        {structured.nodes.map((node) => {
+                          const isTraversed = activeTraversedNodeIds.includes(node.id)
+                          const isFailed = failedNodeIds.includes(node.id)
 
-                        return (
-                          <div key={node.id}>
-                            <NodeCard
-                              node={node}
-                              lang={lang}
-                              lens={effectiveLens}
-                              isTraversed={isTraversed}
-                              isFailed={isFailed}
-                              chaosMode={chaosMode}
-                              onNodeClick={() => handleToggleFault(node.id)}
-                            />
-                            {node.contractToNext && (
-                              <Connector
-                                contract={node.contractToNext}
-                                isTransmitting={isTraversed}
-                                isSevered={isFailed}
+                          return (
+                            <div key={node.id}>
+                              <NodeCard
+                                node={node}
+                                lang={lang}
+                                lens={effectiveLens}
+                                isTraversed={isTraversed}
+                                isFailed={isFailed}
+                                chaosMode={chaosMode}
+                                onNodeClick={() => handleToggleFault(node.id)}
+                                onInspectNode={(n) => setInspectedNode(n)}
                               />
-                            )}
-                          </div>
-                        )
-                      })}
-                    </div>
-                  ) : (
-                    /* Bifurcated Hub-and-Spoke (Gripm) */
-                    <div className="max-w-2xl mx-auto space-y-1">
-                      {/* Stage 1: Consumer Host */}
-                      <NodeCard
-                        node={structured.nodes[0]}
-                        lang={lang}
-                        lens={effectiveLens}
-                        isTraversed={activeTraversedNodeIds.includes(structured.nodes[0].id)}
-                        isFailed={failedNodeIds.includes(structured.nodes[0].id)}
-                        chaosMode={chaosMode}
-                        onNodeClick={() => handleToggleFault(structured.nodes[0].id)}
-                      />
-
-                      {/* Connector Host -> Daemon */}
-                      {structured.nodes[0].contractToNext && (
-                        <Connector
-                          contract={structured.nodes[0].contractToNext}
-                          isTransmitting={
-                            activeTraversedNodeIds.includes(structured.nodes[0].id) ||
-                            activeTraversedNodeIds.includes(structured.nodes[1].id)
-                          }
-                          isSevered={
-                            failedNodeIds.includes(structured.nodes[0].id) ||
-                            failedNodeIds.includes(structured.nodes[1].id)
-                          }
-                        />
-                      )}
-
-                      {/* Stage 2: Central Daemon Hub */}
-                      <NodeCard
-                        node={structured.nodes[1]}
-                        lang={lang}
-                        lens={effectiveLens}
-                        isTraversed={activeTraversedNodeIds.includes(structured.nodes[1].id)}
-                        isFailed={failedNodeIds.includes(structured.nodes[1].id)}
-                        chaosMode={chaosMode}
-                        onNodeClick={() => handleToggleFault(structured.nodes[1].id)}
-                      />
-
-                      {/* Bifurcated Split Indicator */}
-                      <div className="flex flex-col items-center justify-center py-2 px-1 relative my-0.5">
-                        <div
-                          className={`w-[1px] h-5 transition-colors ${
-                            failedNodeIds.includes(structured.nodes[1].id)
-                              ? 'bg-red-500/40'
-                              : 'bg-gradient-to-b from-white/20 via-indigo-500/40 to-white/20'
-                          }`}
-                        />
-                        <div className="my-1 px-3 py-1 rounded-full bg-[#121622] border border-indigo-500/30 text-indigo-200 text-[10px] font-mono flex items-center gap-1.5 shadow-sm shadow-black/40">
-                          <span className="text-indigo-400 font-bold">⇄</span>
-                          <span>
-                            {lang === 'es'
-                              ? 'Bifurcación de Estados Concurrente'
-                              : 'Concurrent State Bifurcation'}
-                          </span>
-                        </div>
-                        <div
-                          className={`w-[1px] h-5 transition-colors ${
-                            failedNodeIds.includes(structured.nodes[1].id)
-                              ? 'bg-red-500/40'
-                              : 'bg-gradient-to-b from-white/20 via-indigo-500/40 to-white/20'
-                          }`}
-                        />
-                      </div>
-
-                      {/* Branches Grid */}
-                      {structured.bifurcation && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                          {structured.bifurcation.branches.map((b) => {
-                            const isBranchTraversed = activeTraversedNodeIds.includes(b.node.id)
-                            const isBranchFailed = failedNodeIds.includes(b.node.id)
-
-                            return (
-                              <div key={b.node.id} className="space-y-2">
-                                <div
-                                  className={`px-2.5 py-1 rounded-md text-[10px] font-mono text-center truncate transition-colors ${
-                                    isBranchFailed
-                                      ? 'bg-red-950/40 border border-red-500/30 text-red-300'
-                                      : isBranchTraversed
-                                      ? 'bg-indigo-950/60 border border-indigo-500/40 text-indigo-200 font-semibold'
-                                      : 'bg-white/[0.02] border border-white/[0.06] text-zinc-400'
-                                  }`}
-                                >
-                                  {b.contract}
-                                </div>
-                                <NodeCard
-                                  node={b.node}
-                                  lang={lang}
-                                  lens={effectiveLens}
-                                  isTraversed={isBranchTraversed}
-                                  isFailed={isBranchFailed}
-                                  chaosMode={chaosMode}
-                                  onNodeClick={() => handleToggleFault(b.node.id)}
+                              {node.contractToNext && (
+                                <Connector
+                                  contract={node.contractToNext}
+                                  isTransmitting={isTraversed}
+                                  isSevered={isFailed}
                                 />
-                              </div>
-                            )
-                          })}
+                              )}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    ) : (
+                      /* Bifurcated Hub-and-Spoke (Gripm) */
+                      <div className="max-w-2xl mx-auto space-y-1">
+                        {/* Stage 1: Consumer Host */}
+                        <NodeCard
+                          node={structured.nodes[0]}
+                          lang={lang}
+                          lens={effectiveLens}
+                          isTraversed={activeTraversedNodeIds.includes(structured.nodes[0].id)}
+                          isFailed={failedNodeIds.includes(structured.nodes[0].id)}
+                          chaosMode={chaosMode}
+                          onNodeClick={() => handleToggleFault(structured.nodes[0].id)}
+                          onInspectNode={(n) => setInspectedNode(n)}
+                        />
+
+                        {/* Connector Host -> Daemon */}
+                        {structured.nodes[0].contractToNext && (
+                          <Connector
+                            contract={structured.nodes[0].contractToNext}
+                            isTransmitting={
+                              activeTraversedNodeIds.includes(structured.nodes[0].id) ||
+                              activeTraversedNodeIds.includes(structured.nodes[1].id)
+                            }
+                            isSevered={
+                              failedNodeIds.includes(structured.nodes[0].id) ||
+                              failedNodeIds.includes(structured.nodes[1].id)
+                            }
+                          />
+                        )}
+
+                        {/* Stage 2: Central Daemon Hub */}
+                        <NodeCard
+                          node={structured.nodes[1]}
+                          lang={lang}
+                          lens={effectiveLens}
+                          isTraversed={activeTraversedNodeIds.includes(structured.nodes[1].id)}
+                          isFailed={failedNodeIds.includes(structured.nodes[1].id)}
+                          chaosMode={chaosMode}
+                          onNodeClick={() => handleToggleFault(structured.nodes[1].id)}
+                          onInspectNode={(n) => setInspectedNode(n)}
+                        />
+
+                        {/* Bifurcated Split Indicator */}
+                        <div className="flex flex-col items-center justify-center py-2 px-1 relative my-0.5">
+                          <div
+                            className={`w-[1px] h-5 transition-colors ${
+                              failedNodeIds.includes(structured.nodes[1].id)
+                                ? 'bg-red-500/40'
+                                : 'bg-gradient-to-b from-white/20 via-indigo-500/40 to-white/20'
+                            }`}
+                          />
+                          <div className="my-1 px-3 py-1 rounded-full bg-[#121622] border border-indigo-500/30 text-indigo-200 text-[10px] font-mono flex items-center gap-1.5 shadow-sm shadow-black/40">
+                            <span className="text-indigo-400 font-bold">⇄</span>
+                            <span>
+                              {lang === 'es'
+                                ? 'Bifurcación de Estados Concurrente'
+                                : 'Concurrent State Bifurcation'}
+                            </span>
+                          </div>
+                          <div
+                            className={`w-[1px] h-5 transition-colors ${
+                              failedNodeIds.includes(structured.nodes[1].id)
+                                ? 'bg-red-500/40'
+                                : 'bg-gradient-to-b from-white/20 via-indigo-500/40 to-white/20'
+                            }`}
+                          />
                         </div>
-                      )}
-                    </div>
-                  )}
+
+                        {/* Branches Grid */}
+                        {structured.bifurcation && (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                            {structured.bifurcation.branches.map((b) => {
+                              const isBranchTraversed = activeTraversedNodeIds.includes(b.node.id)
+                              const isBranchFailed = failedNodeIds.includes(b.node.id)
+
+                              return (
+                                <div key={b.node.id} className="space-y-2">
+                                  <div
+                                    className={`px-2.5 py-1 rounded-md text-[10px] font-mono text-center truncate transition-colors ${
+                                      isBranchFailed
+                                        ? 'bg-red-950/40 border border-red-500/30 text-red-300'
+                                        : isBranchTraversed
+                                        ? 'bg-indigo-950/60 border border-indigo-500/40 text-indigo-200 font-semibold'
+                                        : 'bg-white/[0.02] border border-white/[0.06] text-zinc-400'
+                                    }`}
+                                  >
+                                    {b.contract}
+                                  </div>
+                                  <NodeCard
+                                    node={b.node}
+                                    lang={lang}
+                                    lens={effectiveLens}
+                                    isTraversed={isBranchTraversed}
+                                    isFailed={isBranchFailed}
+                                    chaosMode={chaosMode}
+                                    onNodeClick={() => handleToggleFault(b.node.id)}
+                                    onInspectNode={(n) => setInspectedNode(n)}
+                                  />
+                                </div>
+                              )
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
 
                   {/* ─── SLEEK TRACE TELEMETRY LOG BAR ─── */}
                   <div className="mt-8 border border-white/10 rounded-xl bg-black/75 p-3.5 backdrop-blur font-mono text-xs shadow-inner">
@@ -1857,6 +2040,16 @@ export function SystemTopologyViewer({
               </button>
             </div>
           </div>
+
+          {/* Dedicated Node Inspection Modal (High-Fidelity Popover) */}
+          {inspectedNode && (
+            <NodeInspectorModal
+              node={inspectedNode}
+              lang={lang}
+              lens={effectiveLens}
+              onClose={() => setInspectedNode(null)}
+            />
+          )}
         </div>
       )}
     </>

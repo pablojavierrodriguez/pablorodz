@@ -19,12 +19,12 @@ import {
 
 export function ChronicleSection() {
   const { lang } = useLanguage()
-  const { lens, setLens } = useLens()
+  const { lens } = useLens()
   const [deltaMode, setDeltaMode] = useState<'automated' | 'legacy'>('automated')
 
   return (
-    <section id="experience" className="py-24 px-5 border-t border-white/[0.04] scroll-mt-14">
-      <div className="max-w-4xl mx-auto">
+    <section id="experience" className="pt-14 pb-24 border-t border-white/[0.04] scroll-mt-20">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8">
         {/* Header */}
         <div className="mb-12 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
@@ -100,28 +100,23 @@ export function ChronicleSection() {
               </p>
             </div>
 
-            {/* Lens Switcher (Contextual with useLens) */}
-            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-white/[0.03] border border-white/[0.06] self-start sm:self-auto">
-              <button
-                onClick={() => setLens('product')}
-                className={`px-2.5 py-1 rounded-lg text-xs font-mono font-medium transition-all duration-200 cursor-pointer ${
+            {/* Active Perspective Badge (Synchronized with Header Master Switch) */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-white/10 bg-white/[0.03] self-start sm:self-auto text-xs font-mono">
+              <span
+                className={`w-2 h-2 rounded-full ${
                   lens === 'product'
-                    ? 'bg-white text-zinc-950 shadow-sm'
-                    : 'text-zinc-400 hover:text-white'
+                    ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]'
+                    : 'bg-indigo-400 shadow-[0_0_8px_rgba(129,140,248,0.8)]'
                 }`}
-              >
-                {lang === 'es' ? 'Lente Producto' : 'Product Lens'}
-              </button>
-              <button
-                onClick={() => setLens('arch')}
-                className={`px-2.5 py-1 rounded-lg text-xs font-mono font-medium transition-all duration-200 cursor-pointer ${
-                  lens === 'arch'
-                    ? 'bg-white text-zinc-950 shadow-sm'
-                    : 'text-zinc-400 hover:text-white'
-                }`}
-              >
-                {lang === 'es' ? 'Lente Arquitectura' : 'Arch Lens'}
-              </button>
+              />
+              <span className="text-zinc-400">
+                {lang === 'es' ? 'Perspectiva:' : 'Perspective:'}
+              </span>
+              <span className="font-semibold text-white">
+                {lens === 'product'
+                  ? (lang === 'es' ? 'Producto' : 'Product')
+                  : (lang === 'es' ? 'Arquitectura' : 'Architecture')}
+              </span>
             </div>
           </div>
 
