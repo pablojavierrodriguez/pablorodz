@@ -15,7 +15,7 @@ export function Hero() {
     const target = document.querySelector(selector) as HTMLElement | null
     if (target) {
       const heading = target.querySelector('h2') || target
-      const topOffset = heading.getBoundingClientRect().top + window.scrollY - 76
+      const topOffset = heading.getBoundingClientRect().top + window.scrollY - 104
       window.scrollTo({ top: Math.max(0, topOffset), behavior: 'smooth' })
     }
   }

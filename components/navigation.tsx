@@ -58,7 +58,7 @@ export function Navigation() {
     if (target) {
       // Find the inner heading or title for pixel-perfect positioning right below header
       const heading = target.querySelector('h2') || target
-      const topOffset = heading.getBoundingClientRect().top + window.scrollY - 76
+      const topOffset = heading.getBoundingClientRect().top + window.scrollY - 104
       window.scrollTo({ top: Math.max(0, topOffset), behavior: 'smooth' })
     }
   }
