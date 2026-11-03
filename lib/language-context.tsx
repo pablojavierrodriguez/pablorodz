@@ -10,17 +10,21 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
+function getCookie(name: string): string | null {
+  if (typeof document === 'undefined') return null
+  const match = document.cookie.match(new RegExp('(^|;\\s*)' + name + '=([^;]*)'))
+  return match ? decodeURIComponent(match[2]) : null
+}
+
 function getLanguageSnapshot(): Language {
   if (typeof window === 'undefined') return 'es'
   const urlLang = new URLSearchParams(window.location.search).get('lang')
   if (urlLang === 'es' || urlLang === 'en') return urlLang
+  const cookieLang = getCookie('lang')
+  if (cookieLang === 'es' || cookieLang === 'en') return cookieLang
   const saved = localStorage.getItem('lang') as Language | null
   if (saved === 'es' || saved === 'en') return saved
   return navigator.language.startsWith('en') ? 'en' : 'es'
-}
-
-function getLanguageServerSnapshot(): Language {
-  return 'es'
 }
 
 let listeners: Array<() => void> = []
@@ -37,20 +41,28 @@ function subscribe(callback: () => void) {
   }
 }
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
+export function LanguageProvider({
+  children,
+  initialLang = 'es',
+}: {
+  children: ReactNode
+  initialLang?: Language
+}) {
   const lang = useSyncExternalStore(
     subscribe,
     getLanguageSnapshot,
-    getLanguageServerSnapshot
+    () => initialLang
   )
 
   useEffect(() => {
     document.documentElement.lang = lang
+    document.cookie = `lang=${lang}; path=/; max-age=31536000; SameSite=Lax`
   }, [lang])
 
   const setLang = (l: Language) => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('lang', l)
+      document.cookie = `lang=${l}; path=/; max-age=31536000; SameSite=Lax`
       const url = new URL(window.location.href)
       if (url.searchParams.has('lang')) {
         url.searchParams.set('lang', l)
