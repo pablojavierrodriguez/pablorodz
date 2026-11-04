@@ -6,6 +6,7 @@ import { LanguageProvider } from '@/lib/language-context'
 import { LensProvider } from '@/lib/lens-context'
 import { getSiteUrl, profile, thesis } from '@/lib/content'
 import type { Language } from '@/lib/translations'
+import { Analytics } from '@vercel/analytics/next'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -211,6 +212,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <LanguageProvider initialLang={initialLang}>
           <LensProvider>{children}</LensProvider>
         </LanguageProvider>
+        <Analytics />
       </body>
     </html>
   )
